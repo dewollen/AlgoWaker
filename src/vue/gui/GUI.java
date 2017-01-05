@@ -12,11 +12,8 @@ import java.util.HashMap;
  */
 public class GUI implements IVue {
 
-    private HashMap<Integer, String> numLignes;
-
-    @Override
-    public void setNumLignes(HashMap<Integer, String> numLignes) {
-        this.numLignes = numLignes;
+    public GUI() {
+        System.out.println("Hello world !");
     }
 
     @Override
@@ -26,6 +23,11 @@ public class GUI implements IVue {
 
     @Override
     public void afficherMessage(String message) {
+
+    }
+
+    @Override
+    public void setNumLignes(HashMap<Integer, String> numLignes) {
 
     }
 }
