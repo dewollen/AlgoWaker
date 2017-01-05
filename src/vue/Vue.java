@@ -6,6 +6,6 @@ package vue;
  * @author Win'Rs
  * @version 2017-01-05
  */
-public interface IVue {
+public class Vue {
 
 }

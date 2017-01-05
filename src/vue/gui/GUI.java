@@ -1,6 +1,6 @@
 package vue.gui;
 
-import vue.IVue;
+import vue.Vue;
 
 /**
  * Classe qui gère l'affichage en mode graphique (Graphical User Interface)
@@ -8,6 +8,6 @@ import vue.IVue;
  * @author Win'Rs
  * @version 2017-01-05
  */
-public class GUI implements IVue {
+public class GUI extends Vue {
 
 }
