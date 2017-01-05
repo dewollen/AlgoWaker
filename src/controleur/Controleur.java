@@ -1,4 +1,5 @@
 package controleur;
+import vue.cui.CUI;
 
 import util.donnee.Donnee;
 import util.Lecteur;
@@ -16,6 +17,7 @@ public class Controleur {
     private ArrayList<Donnee> donnees;
 
     public static void main(String[] args) {
-        System.out.println("Bonjour monde !");
+        CUI cui = new CUI();
+        System.out.println(cui.toString());
     }
 }
