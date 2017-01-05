@@ -38,6 +38,7 @@ public class Controleur {
 
         controleur.ouvrirFichier();
 
+        controleur.vue.setNumLignes(controleur.lecteur.getNumLignes());
 
         //CUI cui = new CUI();
         //System.out.println(cui.toString());

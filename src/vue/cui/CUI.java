@@ -2,6 +2,7 @@ package vue.cui;
 
 import vue.IVue;
 
+import java.util.HashMap;
 import java.util.Scanner;
 
 /**
@@ -13,6 +14,12 @@ import java.util.Scanner;
 public class CUI implements IVue {
 
     String[] test = new String[40];
+    private HashMap<Integer, String> numLignes;
+
+    @Override
+    public void setNumLignes(HashMap<Integer, String> numLignes) {
+        this.numLignes = numLignes;
+    }
 
     public String toString() {
 
