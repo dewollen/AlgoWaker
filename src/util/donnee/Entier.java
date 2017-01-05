@@ -19,4 +19,12 @@ public class Entier extends Donnee {
     public void setValeur(int valeur) {
         this.valeur = valeur;
     }
+
+    public int getValeur()            {return this.valeur;    }
+
+    public String getNom()            {return this.nom;       }
+
+    public boolean suivie()           {return this.suivi;     }
+
+    public String getType()           {return this.type;      }
 }
