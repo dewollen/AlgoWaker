@@ -19,4 +19,13 @@ public class Reel extends Donnee {
     public void setValeur(double valeur) {
         this.valeur = valeur;
     }
+
+    public double getValeur()            {return this.valeur;    }
+
+    public String getType()              {return this.type;      }
+
+    public String getNom()               {return this.nom;       }
+
+    public boolean suivi()               {return this.suivi;     }
+
 }
