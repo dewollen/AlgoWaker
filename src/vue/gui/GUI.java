@@ -1,6 +1,6 @@
 package vue.gui;
 
-import vue.Vue;
+import vue.IVue;
 
 /**
  * Classe qui gère l'affichage en mode graphique (Graphical User Interface)
@@ -8,6 +8,15 @@ import vue.Vue;
  * @author Win'Rs
  * @version 2017-01-05
  */
-public class GUI extends Vue {
+public class GUI extends IVue {
 
+    @Override
+    public void ouvrirFichier() {
+
+    }
+
+    @Override
+    public void afficherMessage() {
+
+    }
 }
