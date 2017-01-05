@@ -10,6 +10,4 @@ import bsh.Interpreter;
  */
 public class Traducteur {
     private Interpreter interpreter;
-
-
 }
