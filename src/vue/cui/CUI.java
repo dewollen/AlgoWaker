@@ -2,6 +2,8 @@ package vue.cui;
 
 import vue.IVue;
 
+import java.util.Scanner;
+
 /**
  * Classe qui gère l'affichage en mode console (Console User Interface)
  *
@@ -47,7 +49,10 @@ public class CUI implements IVue {
 
     @Override
     public String ouvrirFichier() {
-        return null;
+        System.out.println("Quel fichier voulez-vous ouvrir ?");
+        Scanner scClavier = new Scanner(System.in);
+
+        return scClavier.nextLine();
     }
 
     @Override

@@ -31,12 +31,13 @@ public class Controleur {
         System.out.println("Voulez-vous lancer le programme en mode Graphique ? (O/N)");
         Scanner scClavier = new Scanner(System.in);
 
-        if(scClavier.hasNext() && scClavier.next().equals("O"))
+        if(scClavier.hasNext() && scClavier.next().toUpperCase().equals("O"))
             controleur = new Controleur(new GUI());
         else
             controleur = new Controleur(new CUI());
 
         controleur.ouvrirFichier();
+
 
         //CUI cui = new CUI();
         //System.out.println(cui.toString());
