@@ -46,12 +46,11 @@ public class CUI implements IVue {
     }
 
     @Override
-    public void ouvrirFichier() {
-
+    public String ouvrirFichier() {
+        return null;
     }
 
     @Override
     public void afficherMessage(String message) {
-
     }
 }

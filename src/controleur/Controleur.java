@@ -43,7 +43,7 @@ public class Controleur {
     }
 
     private void ouvrirFichier() {
-        this.vue.ouvrirFichier();
+        this.lecteur = new Lecteur(this.vue.ouvrirFichier());
     }
 
     private void selectionnerVariables() {

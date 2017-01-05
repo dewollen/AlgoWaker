@@ -30,4 +30,8 @@ public class Lecteur {
             System.out.println("Le fichier spécifié est introuvable.");
         }
     }
+
+    public HashMap<Integer, String> getNumLignes() {
+        return numLignes;
+    }
 }

@@ -8,15 +8,15 @@ import vue.IVue;
  * @author Win'Rs
  * @version 2017-01-05
  */
-public class GUI extends IVue {
+public class GUI implements IVue {
 
     @Override
-    public void ouvrirFichier() {
-
+    public String ouvrirFichier() {
+        return null;
     }
 
     @Override
-    public void afficherMessage() {
+    public void afficherMessage(String message) {
 
     }
 }

@@ -7,6 +7,6 @@ package vue;
  * @version 2017-01-05
  */
 public interface IVue {
-    void ouvrirFichier();
+    String ouvrirFichier();
     void afficherMessage(String message);
 }
