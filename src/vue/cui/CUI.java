@@ -38,7 +38,7 @@ public class CUI implements IVue {
 
         ArrayList<String> alString = new ArrayList<String>();
         for(Integer cle : this.numLignes.keySet()) {
-            alString.add(String.format("| %2d %-80s | ", cle.intValue(), this.numLignes.get(cle).replaceAll("\t", "   ").replaceAll("←", "<-")));
+            alString.add(String.format("| %2d %-80s | ", cle.intValue(), this.numLignes.get(cle).replaceAll("\t", "   ").replaceAll("◄—", "<-")));
         }
 
         for(String s : alString) {
@@ -93,11 +93,11 @@ public class CUI implements IVue {
 
 */
 
-        sRet = sRet.replaceAll("ecrire", "\u001B[34mecrire\u001B[0m");
-        sRet = sRet.replaceAll("fsi", "\u001B[34mfsi\u001B[0m");
-        sRet = sRet.replaceAll("sinon", "\u001B[34msinon\u001B[0m");
-        sRet = sRet.replaceAll("si", "\u001B[34msi\u001B[0m");
-        sRet = sRet.replaceAll("alors", "\u001B[34malors\u001B[0m");
+        sRet = sRet.replaceAll("[\\t| ]sinon[\\t| ]", "\u001B[34m sinon \u001B[0m");
+        sRet = sRet.replaceAll("[\\t| ]fsi[\\t| ]", "\u001B[34m fsi \u001B[0m");
+        sRet = sRet.replaceAll("[\\t| ]si[\\t| ]", "\u001B[34m si \u001B[0m");
+        sRet = sRet.replaceAll("[\\t| ]alors[\\t| ]", "\u001B[34m alors \u001B[0m");
+        sRet = sRet.replaceAll("[\\t| ]ecrire[\\t| ]", "\u001B[34m ecrire \u001B[0m");
 
         return sRet;
     }
