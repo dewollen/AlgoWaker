@@ -1,7 +1,7 @@
-package Vue;
+package vue;
 
 /**
- * Interface qui gère les deux modes de vue (CUI et GUI)
+ * Interface qui gère les deux modes de vue (cui et gui)
  *
  * @author Win'Rs
  * @version 20170105

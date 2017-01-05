@@ -1,6 +1,6 @@
-package Vue.CUI;
+package vue.cui;
 
-import Vue.IVue;
+import vue.IVue;
 
 /**
  * Classe qui gère l'affichage en mode console (Console User Interface)
