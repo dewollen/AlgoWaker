@@ -1,6 +1,6 @@
 package vue.cui;
 
-import vue.IVue;
+import vue.Vue;
 
 /**
  * Classe qui gère l'affichage en mode console (Console User Interface)
@@ -8,6 +8,6 @@ import vue.IVue;
  * @author Win'Rs
  * @version 2017-01-05
  */
-public class CUI implements IVue {
+public class CUI extends Vue {
 
 }
