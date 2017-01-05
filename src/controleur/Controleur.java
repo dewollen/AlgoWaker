@@ -1,4 +1,5 @@
 package controleur;
+import vue.cui.CUI;
 
 /**
  * Classe qui contrôle et fait le lien entre le traducteur et la partie graphique
@@ -8,6 +9,7 @@ package controleur;
  */
 public class Controleur {
     public static void main(String[] args) {
-        System.out.println("Bonjour monde !");
+        CUI cui = new CUI();
+        System.out.println(cui.toString());
     }
 }
