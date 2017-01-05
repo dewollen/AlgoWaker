@@ -18,7 +18,7 @@ public class Lecteur {
         this.numLignes = new HashMap<Integer, String>();
 
         try {
-            Scanner scFichier = new Scanner(new File("fichier"));
+            Scanner scFichier = new Scanner(new File(fichier));
 
             int compteur = 0;
             while(scFichier.hasNextLine()) {
@@ -27,7 +27,7 @@ public class Lecteur {
                 compteur++;
             }
         } catch (FileNotFoundException e) {
-            System.out.println("Le fichier spécifié est introuvable.");
+            System.out.println("Le fichier spécifié (" + fichier + ") est introuvable.");
         }
     }
 
