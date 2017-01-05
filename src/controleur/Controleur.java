@@ -4,10 +4,8 @@ import vue.cui.CUI;
 
 import util.donnee.Donnee;
 import util.Lecteur;
-import vue.gui.GUI;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 /**
  * Classe qui contrôle et fait le lien entre le traducteur et la partie graphique
@@ -28,20 +26,20 @@ public class Controleur {
 
     public static void main(String[] args) {
         Controleur controleur;
-        System.out.println("Voulez-vous lancer le programme en mode Graphique ? (O/N)");
+        /*System.out.println("Voulez-vous lancer le programme en mode Graphique ? (O/N)");
         Scanner scClavier = new Scanner(System.in);
 
         if(scClavier.hasNext() && scClavier.next().toUpperCase().equals("O"))
             controleur = new Controleur(new GUI());
-        else
-            controleur = new Controleur(new CUI());
+        else*/
+        controleur = new Controleur(new CUI());
 
         controleur.ouvrirFichier();
 
         controleur.vue.setNumLignes(controleur.lecteur.getNumLignes());
 
-        //CUI cui = new CUI();
-        //System.out.println(cui.toString());
+        System.out.println(controleur.vue.toString());
+
     }
 
     private void ouvrirFichier() {

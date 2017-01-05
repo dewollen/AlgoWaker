@@ -10,4 +10,5 @@ public abstract class Donnee {
     protected String  nom;
     protected String  type;
     protected boolean suivi;
+    protected boolean constante;
 }

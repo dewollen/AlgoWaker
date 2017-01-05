@@ -2,6 +2,7 @@ package vue.cui;
 
 import vue.IVue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -26,24 +27,25 @@ public class CUI implements IVue {
         for(int i = 0; i < 10; i++)
             test[i] = Integer.toString(i);
 
-        String sRet = "";
 
-        sRet += "¨¨¨¨¨¨¨¨¨¨";
-        sRet += String.format("%-78s", " ");
-        sRet += "¨¨¨¨¨¨¨¨¨¨\n";
-        sRet += "|  CODE  |";
-        sRet += String.format("%-78s", " ");
-        sRet += "|DONNEES |\n";
+        String tremas1 = new String(new char[10]).replace("\0", "¨");
+        String tremas2 = new String(new char[87]).replace("\0", "¨");
+        String tremas3 = new String(new char[48]).replace("\0", "¨");
+        String sRet    = String.format(tremas1 + "%78s" + tremas1 + "¨\n", " ");
+               sRet   += String.format("|  CODE  |%78s| DONNEES |\n"    , " ");
+               sRet   += tremas2 + " " + tremas3 + "\n";
 
-        for(int i = 0; i < 136; i++){
-            if(i == 87)
-                sRet += " ";
-            else
-                sRet += "¨";
+
+        ArrayList<String> alString = new ArrayList<String>();
+        for(Integer cle : this.numLignes.keySet()) {
+            alString.add(String.format("| %2d %-80s | ", cle.intValue(), this.numLignes.get(cle).replaceAll("\t", "   ").replaceAll("←", "<-")));
         }
-        sRet += "\n";
 
-        String mot = "lol";
+        for(String s : alString) {
+            sRet += s + "\n";
+        }
+
+        /*String mot = "lol";
 
         for(int i = 0; i < 40; i++){
             sRet += String.format("| %2d %-80s |", i, mot);
@@ -89,6 +91,9 @@ public class CUI implements IVue {
             sRet +="¨";
 
 
+*/
+
+        sRet.replaceAll("ecrire", "\u001B[34mDEBUT\u001B[0m");
 
         return sRet;
     }
