@@ -1,7 +1,7 @@
 package controleur;
 
 /**
- * Classe qui contrôle et fait le lien entre la partie graphique et la partie métier
+ * Classe qui contrôle et fait le lien entre le traducteur et la partie graphique
  *
  * @author Win'Rs
  * @version 2017-01-05
