@@ -93,7 +93,11 @@ public class CUI implements IVue {
 
 */
 
-        sRet.replaceAll("ecrire", "\u001B[34mDEBUT\u001B[0m");
+        sRet = sRet.replaceAll("ecrire", "\u001B[34mecrire\u001B[0m");
+        sRet = sRet.replaceAll("fsi", "\u001B[34mfsi\u001B[0m");
+        sRet = sRet.replaceAll("sinon", "\u001B[34msinon\u001B[0m");
+        sRet = sRet.replaceAll("si", "\u001B[34msi\u001B[0m");
+        sRet = sRet.replaceAll("alors", "\u001B[34malors\u001B[0m");
 
         return sRet;
     }
