@@ -7,6 +7,7 @@ package util.donnee;
  * @version 2017-01-05
  */
 public abstract class Donnee {
-    protected String nom;
-    protected String type;
+    protected String  nom;
+    protected String  type;
+    protected boolean suivi;
 }
