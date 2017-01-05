@@ -19,4 +19,8 @@ public class Caractere extends Donnee {
     public void setValeur(char valeur) {
         this.valeur = valeur;
     }
+    public char getValeur()            { return this.valeur;   }
+    public String getNom()             { return this.nom;      }
+    public boolean getSuivi()          { return this.suivi;    }
+    public String getType()            { return this.type;     }
 }
