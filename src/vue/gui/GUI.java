@@ -6,7 +6,7 @@ import vue.IVue;
  * Classe qui gère l'affichage en mode graphique (Graphical User Interface)
  *
  * @author Win'Rs
- * @version 20170105
+ * @version 2017-01-05
  */
 public class GUI implements IVue {
 
