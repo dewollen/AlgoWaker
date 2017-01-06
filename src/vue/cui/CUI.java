@@ -29,6 +29,7 @@ public class CUI implements IVue {
         this.numLignes = numLignes;
     }
 
+    @Override
     public String toString() {
         return this.afficher(null);
     }
