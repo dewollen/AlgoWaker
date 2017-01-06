@@ -17,11 +17,10 @@ public class Booleen extends Donnee {
         this.constante = constante;
     }
 
-    public void setValeur(boolean valeur) {
-        this.valeur = valeur;
-    }
-    public boolean getValeur()            { return this.valeur;   }
-    public String getNom()                { return this.nom;      }
-    public String getType()               { return this.type;     }
-    public boolean getSuivi()             { return this.suivi;    }
+    public void setValeur(String valeur)  {this.valeur = Boolean.getBoolean(valeur); }
+
+    public boolean getValeur() {return this.valeur;}
+    public String  getNom()    {return this.nom;   }
+    public String  getType()   {return this.type;  }
+    public boolean getSuivi()  {return this.suivi; }
 }

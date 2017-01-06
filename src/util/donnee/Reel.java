@@ -17,16 +17,11 @@ public class Reel extends Donnee {
         this.constante = constante;
     }
 
-    public void setValeur(double valeur) {
-        this.valeur = valeur;
-    }
+    public void setValeur(String valeur) {this.valeur = Double.parseDouble(valeur);}
 
-    public double getValeur()            {return this.valeur;    }
-
-    public String getType()              {return this.type;      }
-
-    public String getNom()               {return this.nom;       }
-
-    public boolean suivi()               {return this.suivi;     }
+    public double  getValeur() {return this.valeur;}
+    public String  getType()   {return this.type;  }
+    public String  getNom()    {return this.nom;   }
+    public boolean getSuivi()  {return this.suivi; }
 
 }

@@ -11,4 +11,6 @@ public abstract class Donnee {
     protected String  type;
     protected boolean suivi;
     protected boolean constante;
+
+    protected void setValeur(String sVal) {}
 }

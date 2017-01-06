@@ -17,15 +17,10 @@ public class Entier extends Donnee {
         this.constante = constante;
     }
 
-    public void setValeur(int valeur) {
-        this.valeur = valeur;
-    }
+    public void setValeur(String valeur) {this.valeur = Integer.parseInt(valeur);}
 
-    public int getValeur()            {return this.valeur;    }
-
-    public String getNom()            {return this.nom;       }
-
-    public boolean suivie()           {return this.suivi;     }
-
-    public String getType()           {return this.type;      }
+    public int     getValeur() {return this.valeur;}
+    public String  getNom()    {return this.nom;   }
+    public boolean getSuivi()  {return this.suivi; }
+    public String  getType()   {return this.type;  }
 }

@@ -17,11 +17,10 @@ public class Chaine extends Donnee {
         this.constante = constante;
     }
 
-    public void setValeur(String valeur) {
-        this.valeur = valeur;
-    }
-    public String getValeur()            { return this.valeur;   }
-    public String getNom()               { return this.nom;      }
-    public String getType()              { return this.type;     }
-    public boolean getSuivi()            { return this.suivi;    }
+    public void setValeur(String valeur) {this.valeur = valeur;}
+
+    public String  getValeur() {return this.valeur;}
+    public String  getNom()    {return this.nom;   }
+    public String  getType()   {return this.type;  }
+    public boolean getSuivi()  {return this.suivi; }
 }
