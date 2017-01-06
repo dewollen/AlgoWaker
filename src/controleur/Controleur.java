@@ -1,4 +1,5 @@
 package controleur;
+import util.donnee.Entier;
 import vue.IVue;
 import vue.cui.CUI;
 
@@ -37,6 +38,12 @@ public class Controleur {
         controleur.ouvrirFichier();
 
         controleur.vue.setNumLignes(controleur.lecteur.getNumLignes());
+
+        controleur.donnees = new ArrayList<Donnee>();
+        controleur.donnees.add(new Entier("x", true, false));
+        controleur.donnees.get(0).setValeur("5");
+        controleur.donnees.add(new Entier("y", true, false));
+        controleur.donnees.get(1).setValeur("7");
 
         System.out.println(controleur.vue.toString());
 

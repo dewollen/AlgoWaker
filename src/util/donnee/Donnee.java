@@ -12,5 +12,5 @@ public abstract class Donnee {
     protected boolean suivi;
     protected boolean constante;
 
-    protected void setValeur(String sVal) {}
+    public void setValeur(String sVal) {}
 }
