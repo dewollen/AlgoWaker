@@ -16,4 +16,5 @@ public interface IVue {
     void afficherMessage(String message);
     void setNumLignes(HashMap<Integer, String> numLignes);
     void setAlTraceVariables(ArrayList<Donnee> alTraceVariables);
+    void majIhm();
 }

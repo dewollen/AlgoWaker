@@ -35,4 +35,9 @@ public class GUI implements IVue {
     public void setAlTraceVariables(ArrayList<Donnee> alTraceVariables) {
 
     }
+
+    @Override
+    public void majIhm() {
+
+    }
 }

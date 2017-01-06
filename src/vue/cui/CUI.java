@@ -140,4 +140,9 @@ public class CUI implements IVue {
     @Override
     public void afficherMessage(String message) {
     }
+
+    @Override
+    public void majIhm() {
+
+    }
 }
