@@ -12,6 +12,15 @@ import java.util.HashMap;
  * @version 2017-01-05
  */
 public interface IVue {
+    String[] motsCles = new String[]{"si",
+                                     "alors",
+                                     "sinon",
+                                     "fsi",
+                                     "ecrire",
+                                     "lire",
+                                     "tantque",
+                                     "ftq"};
+
     String ouvrirFichier();
     void afficherMessage(String message);
     String afficher(Integer nLigne);

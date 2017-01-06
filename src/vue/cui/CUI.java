@@ -53,104 +53,59 @@ public class CUI implements IVue {
 
     @Override
     public String afficher(Integer nLigne) {
-
-        for(int i = 0; i < 10; i++)
-            test[i] = Integer.toString(i);
-
-
         String tremas1 = new String(new char[10]).replace("\0", "¨");
         String tremas2 = new String(new char[87]).replace("\0", "¨");
         String tremas3 = new String(new char[48]).replace("\0", "¨");
         String sRet    = String.format(tremas1 + "%78s" + tremas1 + "¨\n", " ");
-        sRet   += String.format("|  CODE  |%78s| DONNEES |\n"    , " ");
-        sRet   += tremas2 + " " + tremas3 + "\n";
-
+        sRet          += String.format("|  CODE  |%78s| DONNEES |\n"    , " ");
+        sRet          += tremas2 + " " + tremas3 + "\n";
 
         ArrayList<String> alString = new ArrayList<String>();
-        for(Integer cle : this.numLignes.keySet()) {
-            if(nLigne != null && nLigne.equals(cle))
-                alString.add(String.format("| %2d \u001B[44m\u001B[30m%-80s\u001B[0m | ", cle.intValue(),
-                        this.numLignes.get(cle).replaceAll("\t", "   ").replaceAll("◄—", "<-")));
-            else
-                alString.add(String.format("| %2d %-80s | ", cle.intValue(),
-                        this.numLignes.get(cle).replaceAll("\t", "   ").replaceAll("◄—", "<-")));
-        }
+        this.formaterCode(nLigne, alString);
 
-        int cpt = 0;
-        for(String s : alString) {
-            if(cpt == 0) {
-                s += String.format("|   %-8s |   %-8s |  %-17s |", "NOM", "TYPE", "VALEUR");
-            }
-            if(cpt <= alTraceVariables.size() && cpt != 0) {
-                s += String.format("| %-10s | ", alTraceVariables.get(cpt-1).getNom());
-                s += String.format("%-10s | ", alTraceVariables.get(cpt-1).getType());
-                s += String.format("%-18s |" , alTraceVariables.get(cpt-1).getValeur());
-            }
-
-            if(cpt == alTraceVariables.size()+1) {
-                s += tremas3;
-            }
-
+        for(String s : alString)
             sRet += s + "\n";
-            cpt++;
-        }
+
 
         sRet += tremas2;
-        /*String mot = "lol";
-
-        for(int i = 0; i < 40; i++){
-            sRet += String.format("| %2d %-80s |", i, mot);
-            if(i == 0)
-                sRet += " |    NOM    |    TYPE    |   VALEUR            |";
-            else{
-                if(i < test.length){
-                    sRet += String.format(" | %-10s| %-11s| %-20s|",test[i-1],test[i-1],test[i-1]);
-                }
-                if(i == test.length) {
-                    sRet += " ";
-                    for(int j = 0; j < 48; j++)
-                        sRet += "¨";
-                }
-            }
-            if(i % 2 == 0){
-                mot = "eifjiefjief";
-            }
-            else{
-                mot = "lol";
-            }
-
-            sRet += "\n";
-        }
-
-        for(int i = 0; i < 87; i++)
-            sRet +="¨";
-
-
-        //PARTIE CONSOLE !!
-        sRet += "\n¨¨¨¨¨¨¨¨¨¨¨\n";
-        sRet += "| CONSOLE |\n";
-        for(int i = 0; i < 87; i++)
-            sRet +="¨";
-
-        sRet += "\n";
-
-        for(int i = 0; i < 3; i++)
-            sRet += String.format("|%-85s|\n",test[i]);
-
-        sRet += String.format("|%-85s|\n"," ");
-        for(int i = 0; i < 87; i++)
-            sRet +="¨";
-
-
-*/
-
-        sRet = sRet.replaceAll("[\\t| ]sinon[\\t| ]", "\u001B[34m sinon \u001B[0m");
-        sRet = sRet.replaceAll("[\\t| ]fsi[\\t| ]", "\u001B[34m fsi \u001B[0m");
-        sRet = sRet.replaceAll("[\\t| ]si[\\t| ]", "\u001B[34m si \u001B[0m");
-        sRet = sRet.replaceAll("[\\t| ]alors[\\t| ]", "\u001B[34m alors \u001B[0m");
-        sRet = sRet.replaceAll("[\\t| ]ecrire[\\t| ]", "\u001B[34m ecrire \u001B[0m");
 
         return sRet;
+    }
+
+    private void formaterCode(Integer nLigne, ArrayList<String> alString) {
+        String sTemp;
+        for(Integer cle : this.numLignes.keySet()) {
+            sTemp = this.numLignes.get(cle);
+            sTemp = sTemp.replaceAll("\t", "   ");
+            sTemp = sTemp.replaceAll("◄—", "<-");
+
+            alString.add(String.format("| %2d %-80s | ", cle.intValue(),
+                    colorerCode(cle, nLigne, sTemp)));
+        }
+    }
+
+    private String colorerCode(Integer cle, Integer nLigne, String ligne) {
+            String sRet;
+
+            if(ligne.equals(""))
+                sRet = " ";
+            else
+                sRet = ligne;
+
+            if (nLigne != null && nLigne.equals(cle))
+                sRet = "\u001B[45m" + String.format("%-80s", sRet) + "\u001B[0m";
+            else
+                sRet = String.format("%-80s", sRet);
+
+
+            for(String motCle : IVue.motsCles) {
+                if (nLigne != null && nLigne.equals(cle))
+                    sRet = sRet.replace(motCle, "\u001B[45m\u001B[34m" + motCle + "\u001B[0m\u001B[45m");
+                else
+                    sRet = sRet.replace(motCle, "\u001B[34m" + motCle + "\u001B[0m");
+            }
+
+            return sRet;
     }
 
     @Override

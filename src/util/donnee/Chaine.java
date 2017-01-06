@@ -10,7 +10,7 @@ public class Chaine extends Donnee {
     public Chaine(String nom, boolean suivi, boolean constante) {
         this.nom       = nom;
         this.type      = "Chaîne";
-        this.valeur    = null;
+        this.valeur    = "";
         this.suivi     = suivi;
         this.constante = constante;
     }
