@@ -63,25 +63,8 @@ public class CUI implements IVue {
         ArrayList<String> alString = new ArrayList<String>();
         this.formaterCode(nLigne, alString);
 
-        int cpt = 0;
-
-        for(String s : alString){
-            if(cpt == 0) {
-                s += String.format("|   %-8s |   %-8s |  %-17s |", "NOM", "TYPE", "VALEUR");
-            }
-        if(cpt <= alTraceVariables.size() && cpt != 0) {
-            s += String.format("| %-10s | ", alTraceVariables.get(cpt-1).getNom());
-            s += String.format("%-10s | ", alTraceVariables.get(cpt-1).getType());
-            s += String.format("%-18s |" , alTraceVariables.get(cpt-1).getValeur());
-        }
-
-        if(cpt == alTraceVariables.size()+1) {
-            s += tremas3;
-        }
-
-        sRet += s + "\n";
-        cpt++;
-    }
+        for(String s : alString)
+            sRet += s + "\n";
 
 
         sRet += tremas2;
@@ -102,31 +85,27 @@ public class CUI implements IVue {
     }
 
     private String colorerCode(Integer cle, Integer nLigne, String ligne) {
-        String sRet;
+            String sRet;
 
-        if(ligne.equals(""))
-            sRet = " ";
-        else
-            sRet = ligne;
-
-        if (nLigne != null && nLigne.equals(cle))
-            sRet = "\u001B[45m" + String.format("%-80s", sRet) + "\u001B[0m";
-        else
-            sRet = String.format("%-80s", sRet);
-
-
-        for(String motCle : IVue.motsCles) {
-            if (nLigne != null && nLigne.equals(cle))
-                sRet = sRet.replace(motCle, "\u001B[45m\u001B[34m" + motCle + "\u001B[0m\u001B[45m");
+            if(ligne.equals(""))
+                sRet = " ";
             else
-                sRet = sRet.replace(motCle, "\u001B[34m" + motCle + "\u001B[0m");
-        }
+                sRet = ligne;
 
-        return sRet;
-    }
+            if (nLigne != null && nLigne.equals(cle))
+                sRet = "\u001B[45m" + String.format("%-80s", sRet) + "\u001B[0m";
+            else
+                sRet = String.format("%-80s", sRet);
 
-    public HashMap<Integer, String> getNumLignes() {
-        return numLignes;
+
+            for(String[] motCle : IVue.motsCles) {
+                if (nLigne != null && nLigne.equals(cle))
+                    sRet = sRet.replace(motCle[0], "\u001B[45m" + motCle[1] + motCle[0] + "\u001B[0m\u001B[45m");
+                else
+                    sRet = sRet.replace(motCle[0], motCle[1] + motCle[0] + "\u001B[0m");
+            }
+
+            return sRet;
     }
 
     @Override

@@ -1,4 +1,5 @@
 package controleur;
+import metier.Traducteur;
 import util.donnee.Entier;
 import vue.IVue;
 import vue.cui.CUI;
@@ -20,6 +21,7 @@ public class Controleur {
     private IVue vue;
     private Lecteur           lecteur;
     private ArrayList<Donnee> donnees;
+    private Traducteur        traducteur;
 
     public Controleur(IVue vue) {
         this.vue     = vue;
@@ -39,15 +41,22 @@ public class Controleur {
 
         controleur.ouvrirFichier();
 
+        controleur.traducteur = new Traducteur(controleur.lecteur);
+
+        controleur.traducteur.chercherConstantes(controleur.lecteur.getNumLignes());
+        controleur.traducteur.chercherVariables(controleur.lecteur.getNumLignes());
+
+        controleur.vue.setAlTraceVariables(controleur.traducteur.getAlDonnee());
+
         controleur.vue.setNumLignes(controleur.lecteur.getNumLignes());
 
-        controleur.donnees = new ArrayList<Donnee>();
+        /*controleur.donnees = new ArrayList<Donnee>();
         controleur.donnees.add(new Entier("x", true, false));
         controleur.donnees.get(0).setValeur("5");
         controleur.donnees.add(new Entier("y", true, false));
         controleur.donnees.get(1).setValeur("7");
 
-        controleur.vue.setAlTraceVariables(controleur.donnees);
+        controleur.vue.setAlTraceVariables(controleur.donnees);*/
 
 
         controleur.commencerLecture();
