@@ -1,7 +1,9 @@
 package vue.gui;
 
+import util.donnee.Donnee;
 import vue.IVue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -26,6 +28,11 @@ public class GUI implements IVue {
 
     @Override
     public void afficherMessage(String message) {
+
+    }
+
+    @Override
+    public void setAlTraceVariables(ArrayList<Donnee> alTraceVariables) {
 
     }
 }

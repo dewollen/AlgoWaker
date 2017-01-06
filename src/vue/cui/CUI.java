@@ -1,5 +1,6 @@
 package vue.cui;
 
+import util.donnee.Donnee;
 import vue.IVue;
 
 import java.util.ArrayList;
@@ -16,6 +17,12 @@ public class CUI implements IVue {
 
     String[] test = new String[10];
     private HashMap<Integer, String> numLignes;
+
+    private ArrayList<Donnee>        alTraceVariables;
+
+    public CUI() {
+        this.alTraceVariables = new ArrayList<Donnee>();
+    }
 
     @Override
     public void setNumLignes(HashMap<Integer, String> numLignes) {
@@ -41,8 +48,23 @@ public class CUI implements IVue {
             alString.add(String.format("| %2d %-80s | ", cle.intValue(), this.numLignes.get(cle).replaceAll("\t", "   ").replaceAll("◄—", "<-")));
         }
 
+        int cpt = 0;
         for(String s : alString) {
+            if(cpt == 0) {
+                s += String.format("|   %-8s |   %-8s |  %-17s |", "NOM", "TYPE", "VALEUR");
+            }
+            if(cpt <= alTraceVariables.size() && cpt != 0) {
+                s += String.format("| %-10s | ", alTraceVariables.get(cpt-1).getNom());
+                s += String.format("%-10s | ", alTraceVariables.get(cpt-1).getType());
+                s += String.format("%-18s |" , alTraceVariables.get(cpt-1).getValeur());
+            }
+
+            if(cpt == alTraceVariables.size()+1) {
+                s += tremas3;
+            }
+
             sRet += s + "\n";
+            cpt++;
         }
 
         /*String mot = "lol";
@@ -100,6 +122,11 @@ public class CUI implements IVue {
         sRet = sRet.replaceAll("[\\t| ]ecrire[\\t| ]", "\u001B[34m ecrire \u001B[0m");
 
         return sRet;
+    }
+
+    @Override
+    public void setAlTraceVariables(ArrayList<Donnee> alTraceVariables) {
+        this.alTraceVariables = alTraceVariables;
     }
 
     @Override

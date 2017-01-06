@@ -1,5 +1,8 @@
 package vue;
 
+import util.donnee.Donnee;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -12,4 +15,5 @@ public interface IVue {
     String ouvrirFichier();
     void afficherMessage(String message);
     void setNumLignes(HashMap<Integer, String> numLignes);
+    void setAlTraceVariables(ArrayList<Donnee> alTraceVariables);
 }

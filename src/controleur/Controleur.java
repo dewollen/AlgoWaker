@@ -45,6 +45,8 @@ public class Controleur {
         controleur.donnees.add(new Entier("y", true, false));
         controleur.donnees.get(1).setValeur("7");
 
+        controleur.vue.setAlTraceVariables(controleur.donnees);
+
         System.out.println(controleur.vue.toString());
 
     }
