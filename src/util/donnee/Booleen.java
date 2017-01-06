@@ -9,11 +9,12 @@ package util.donnee;
 public class Booleen extends Donnee {
     private boolean valeur;
 
-    public Booleen(String nom, boolean suivi) {
+    public Booleen(String nom, boolean suivi, boolean constante) {
         this.nom    = nom;
         this.type   = "booléen";
         this.valeur = false;
         this.suivi  = suivi;
+        this.constante = constante;
     }
 
     public void setValeur(boolean valeur) {

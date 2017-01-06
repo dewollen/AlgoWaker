@@ -9,11 +9,12 @@ package util.donnee;
 public class Caractere extends Donnee {
     private char valeur;
 
-    public Caractere(String nom, boolean suivi) {
+    public Caractere(String nom, boolean suivi, boolean constante) {
         this.nom    = nom;
         this.type   = "caractère";
         this.valeur = '\0';
         this.suivi  = suivi;
+        this.constante = constante;
     }
 
     public void setValeur(char valeur) {
