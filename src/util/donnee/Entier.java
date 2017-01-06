@@ -7,16 +7,13 @@ package util.donnee;
  * @version 2017-01-05
  */
 public class Entier extends Donnee {
-    private int valeur;
-
-    public Entier(String nom, boolean suivi) {
+    public Entier(String nom, boolean suivi, boolean constante) {
         this.nom    = nom;
         this.type   = "entier";
-        this.valeur = 0;
+        this.valeur = "0";
         this.suivi  = suivi;
+        this.constante = constante;
     }
 
-    public void setValeur(int valeur) {
-        this.valeur = valeur;
-    }
+    public void setValeur(String valeur) { this.valeur = String.valueOf(Integer.parseInt(valeur)); }
 }

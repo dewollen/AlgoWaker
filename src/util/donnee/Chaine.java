@@ -7,16 +7,13 @@ package util.donnee;
  * @version 2017-01-05
  */
 public class Chaine extends Donnee {
-    private String valeur;
-
-    public Chaine(String nom, boolean suivi) {
-        this.nom    = nom;
-        this.type   = "Chaîne";
-        this.valeur = null;
-        this.suivi  = suivi;
+    public Chaine(String nom, boolean suivi, boolean constante) {
+        this.nom       = nom;
+        this.type      = "Chaîne";
+        this.valeur    = null;
+        this.suivi     = suivi;
+        this.constante = constante;
     }
 
-    public void setValeur(String valeur) {
-        this.valeur = valeur;
-    }
+    public void setValeur(String valeur) { this.valeur = valeur; }
 }

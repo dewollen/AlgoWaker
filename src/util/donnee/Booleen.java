@@ -7,16 +7,13 @@ package util.donnee;
  * @version 2017-01-05
  */
 public class Booleen extends Donnee {
-    private boolean valeur;
-
-    public Booleen(String nom, boolean suivi) {
+    public Booleen(String nom, boolean suivi, boolean constante) {
         this.nom    = nom;
         this.type   = "booléen";
-        this.valeur = false;
+        this.valeur = "false";
         this.suivi  = suivi;
+        this.constante = constante;
     }
 
-    public void setValeur(boolean valeur) {
-        this.valeur = valeur;
-    }
+    public void setValeur(String valeur)  { this.valeur = String.valueOf(Boolean.getBoolean(valeur)); }
 }

@@ -1,7 +1,8 @@
 <component name="libraryTable">
-  <library name="bsh-2.0b4">
+  <library name="Outils">
     <CLASSES>
       <root url="jar://$USER_HOME$/Downloads/bsh-2.0b4.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jansi-1.12.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

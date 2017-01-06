@@ -7,16 +7,14 @@ package util.donnee;
  * @version 2017-01-05
  */
 public class Reel extends Donnee {
-    private double valeur;
-
-    public Reel(String nom, boolean suivi) {
+    public Reel(String nom, boolean suivi, boolean constante) {
         this.nom    = nom;
         this.type   = "réel";
-        this.valeur = .0;
+        this.valeur = ".0";
         this.suivi  = suivi;
+        this.constante = constante;
     }
 
-    public void setValeur(double valeur) {
-        this.valeur = valeur;
-    }
+    public void setValeur(String valeur) { this.valeur = String.valueOf(Double.parseDouble(valeur)); }
+
 }
