@@ -1,4 +1,4 @@
-ALGORTIHME NomAlgo
+ALGORITHME NomAlgo
 constante: 
 
 variable:
@@ -33,7 +33,8 @@ DEBUT
 	sinon 
 		ecrire ("etape 7") 
 	fsi 
-	
+
+
 	ecrire ( "etape 8" ) 
  
 FIN

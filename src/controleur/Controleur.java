@@ -7,6 +7,8 @@ import util.donnee.Donnee;
 import util.Lecteur;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Scanner;
 
 /**
  * Classe qui contrôle et fait le lien entre le traducteur et la partie graphique
@@ -45,8 +47,10 @@ public class Controleur {
         controleur.donnees.add(new Entier("y", true, false));
         controleur.donnees.get(1).setValeur("7");
 
-        System.out.println(controleur.vue.toString());
+        controleur.vue.setAlTraceVariables(controleur.donnees);
 
+
+        controleur.commencerLecture();
     }
 
     private void ouvrirFichier() {
@@ -56,5 +60,19 @@ public class Controleur {
     private void selectionnerVariables() {
         this.vue.afficherMessage("Quelles variables voulez-vous suivre via la trace des variables ?");
 
+    }
+
+    private void commencerLecture() {
+        Iterator<Integer> i = this.lecteur.getNumLignes().keySet().iterator();
+
+        System.out.println(this.vue.afficher(i.next()));
+
+        while(i.hasNext()) {
+            System.out.print("Action : ");
+            Scanner scClavier = new Scanner(System.in);
+
+            if(scClavier.nextLine().equals(""))
+                System.out.println(this.vue.afficher(i.next()));
+        }
     }
 }
