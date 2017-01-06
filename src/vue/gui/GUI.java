@@ -32,6 +32,11 @@ public class GUI implements IVue {
     }
 
     @Override
+    public String afficher(Integer nLigne) {
+        return null;
+    }
+
+    @Override
     public void setAlTraceVariables(ArrayList<Donnee> alTraceVariables) {
 
     }

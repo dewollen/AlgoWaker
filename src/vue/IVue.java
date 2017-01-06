@@ -14,6 +14,7 @@ import java.util.HashMap;
 public interface IVue {
     String ouvrirFichier();
     void afficherMessage(String message);
+    String afficher(Integer nLigne);
     void setNumLignes(HashMap<Integer, String> numLignes);
     void setAlTraceVariables(ArrayList<Donnee> alTraceVariables);
     void majIhm();

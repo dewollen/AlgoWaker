@@ -47,7 +47,7 @@ public class Controleur {
 
         controleur.vue.setAlTraceVariables(controleur.donnees);
 
-        System.out.println(controleur.vue.toString());
+        System.out.println(controleur.vue.afficher(8));
 
     }
 

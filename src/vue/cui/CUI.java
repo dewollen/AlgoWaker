@@ -30,6 +30,28 @@ public class CUI implements IVue {
     }
 
     public String toString() {
+        return this.afficher(null);
+    }
+
+    @Override
+    public void setAlTraceVariables(ArrayList<Donnee> alTraceVariables) {
+        this.alTraceVariables = alTraceVariables;
+    }
+
+    @Override
+    public String ouvrirFichier() {
+        System.out.println("Quel fichier voulez-vous ouvrir ?");
+        Scanner scClavier = new Scanner(System.in);
+
+        return scClavier.nextLine();
+    }
+
+    @Override
+    public void afficherMessage(String message) {
+    }
+
+    @Override
+    public String afficher(Integer nLigne) {
 
         for(int i = 0; i < 10; i++)
             test[i] = Integer.toString(i);
@@ -39,13 +61,18 @@ public class CUI implements IVue {
         String tremas2 = new String(new char[87]).replace("\0", "¨");
         String tremas3 = new String(new char[48]).replace("\0", "¨");
         String sRet    = String.format(tremas1 + "%78s" + tremas1 + "¨\n", " ");
-               sRet   += String.format("|  CODE  |%78s| DONNEES |\n"    , " ");
-               sRet   += tremas2 + " " + tremas3 + "\n";
+        sRet   += String.format("|  CODE  |%78s| DONNEES |\n"    , " ");
+        sRet   += tremas2 + " " + tremas3 + "\n";
 
 
         ArrayList<String> alString = new ArrayList<String>();
         for(Integer cle : this.numLignes.keySet()) {
-            alString.add(String.format("| %2d %-80s | ", cle.intValue(), this.numLignes.get(cle).replaceAll("\t", "   ").replaceAll("◄—", "<-")));
+            if(nLigne != null && nLigne.equals(cle))
+                alString.add(String.format("| %2d \u001B[44m\u001B[30m%-80s\u001B[0m | ", cle.intValue(),
+                        this.numLignes.get(cle).replaceAll("\t", "   ").replaceAll("◄—", "<-")));
+            else
+                alString.add(String.format("| %2d %-80s | ", cle.intValue(),
+                        this.numLignes.get(cle).replaceAll("\t", "   ").replaceAll("◄—", "<-")));
         }
 
         int cpt = 0;
@@ -67,6 +94,7 @@ public class CUI implements IVue {
             cpt++;
         }
 
+        sRet += tremas2;
         /*String mot = "lol";
 
         for(int i = 0; i < 40; i++){
@@ -122,23 +150,6 @@ public class CUI implements IVue {
         sRet = sRet.replaceAll("[\\t| ]ecrire[\\t| ]", "\u001B[34m ecrire \u001B[0m");
 
         return sRet;
-    }
-
-    @Override
-    public void setAlTraceVariables(ArrayList<Donnee> alTraceVariables) {
-        this.alTraceVariables = alTraceVariables;
-    }
-
-    @Override
-    public String ouvrirFichier() {
-        System.out.println("Quel fichier voulez-vous ouvrir ?");
-        Scanner scClavier = new Scanner(System.in);
-
-        return scClavier.nextLine();
-    }
-
-    @Override
-    public void afficherMessage(String message) {
     }
 
     @Override
