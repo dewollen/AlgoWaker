@@ -61,6 +61,7 @@ public class Traducteur {
 
             } else if (debutAlgo) {
 
+                // Affectation !!!
                 if (ligneCourante.contains("<-")) {
                     String[] tabAffectation = ligneCourante.split("<-");
                     tabAffectation[0] = tabAffectation[0].replaceAll("[\t ]", "");
@@ -74,6 +75,28 @@ public class Traducteur {
                                 alVariable.get(i).setValeur("" + interpreter.get(tabAffectation[0]));
                             }
                         }
+                    } catch (EvalError evalError) {
+                        evalError.printStackTrace();
+                    }
+                }
+
+                // ECRIRE !!!
+                if(ligneCourante.contains("\tecrire ")) {
+                    String[] tabEcrire = ligneCourante.split("[()]");
+                    tabEcrire[1] = tabEcrire[1].replaceAll(" ", "");
+                    String[] tabSOP = tabEcrire[1].split("&");
+
+                    try {
+                        String sTemp = "";
+                        for(int i=0; i<tabSOP.length; i++) {
+                            if(tabSOP[i].contains("\"")) {
+                                sTemp += tabSOP[i];
+                            }
+                            else {
+                                sTemp += interpreter.get(tabSOP[i]);
+                            }
+                        }
+                        System.out.println(sTemp);
                     } catch (EvalError evalError) {
                         evalError.printStackTrace();
                     }
