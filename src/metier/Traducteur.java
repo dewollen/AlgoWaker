@@ -17,86 +17,129 @@ import java.util.Scanner;
 public class Traducteur {
     private Interpreter interpreter;
     private Lecteur     lecteur;
-    private ArrayList<Donnee> alDonnee;
+    private HashMap<Integer, String> numLignes;
+    private boolean creeCons;
+    private boolean creeVar;
+    private boolean debutAlgo;
+
+    private ArrayList<Donnee> alConstante;
+    private ArrayList<Donnee> alVariable;
 
     public Traducteur(Lecteur lecteur) {
         this.lecteur = lecteur;
-        this.alDonnee = new ArrayList<Donnee>();
+
+        this.creeCons  = false;
+        this.creeVar   = true;
+        this.debutAlgo = false;
+
+        this.numLignes = lecteur.getNumLignes();
+
+        this.alConstante = new ArrayList<>();
+        this.alVariable = new ArrayList<>();
     }
 
-    public void chercherConstantes(HashMap<Integer, String> numLignes) {
-        for(Integer i:numLignes.keySet()) {
-            if(numLignes.get(i).toUpperCase().contains("CONSTANTE")) {
-                i++;
-                while(!numLignes.get(i).toUpperCase().contains("VARIABLE")) {
-                    ArrayList<String> alCons    = new ArrayList<String>();
-                    String s = numLignes.get(i).replaceAll(",", " ");
-                    String sTemp;
-                    String type="";
-                    Scanner sc = new Scanner(s);
-                    if(sc.hasNext()) {
-                        while (!(sTemp = sc.next()).equals(":")) {
-                            System.out.println(sTemp);
-                            alCons.add(sTemp);
-                        }
+    public void traiteLigne(Integer ligne) {
+        String[] tabLigne;
+        String   type = "";
+        String ligneCourante = this.numLignes.get(ligne).replaceAll("◄—", "<-");
+        if(ligneCourante.toLowerCase().contains("constante")) {
+            creeCons = true;
+        }
+        if(ligneCourante.toLowerCase().contains("variable")) {
+            creeCons = false;
+            creeVar = true;
+        }
+        if(ligneCourante.toLowerCase().contains("debut")) {
+            creeVar = false;
+            debutAlgo = true;
+        }
+        if(debutAlgo) {
 
-                        type = sc.next().toLowerCase();
-                    }
+        }
+        else if(creeVar) {
+            tabLigne = ligneCourante.split(":");
+            tabLigne[0] = tabLigne[0].replaceAll("[\t ]", "");
+            System.out.println(tabLigne[0]);
+            tabLigne[1] = tabLigne[1].replaceAll(" ", "");
+            String[] tabNomVar = tabLigne[0].split(",");
+            type = tabLigne[1];
 
-                    for(String sCons:alCons) {
-                        switch(type) {
-                            case "booleen" : alDonnee.add(new Booleen(sCons, true, true)); break;
-                            case "caractere" : alDonnee.add(new Caractere(sCons, true, true)); break;
-                            case "chaine" : alDonnee.add(new Chaine(sCons, true, true)); break;
-                            case "chaine de caractere" : alDonnee.add(new Chaine(sCons, true, true)); break;
-                            case "entier" : alDonnee.add(new Entier(sCons, true, true)); break;
-                            case "reel" : alDonnee.add(new Reel(sCons, true, true));
-                            default : break;
-                        }
-                    }
-                    i++;
-                }
+            ajouteVariable(tabNomVar, type);
+        }
+        else if(creeCons) {
+            tabLigne = ligneCourante.split("<-");
+            tabLigne[0] = tabLigne[0].replaceAll("[\t ]", "");
+            tabLigne[1] = tabLigne[1].replaceAll(" ", "");
+            String[] tabNomCons = tabLigne[0].split(",");
+            type = rechercheType(tabLigne[1]);
+
+            ajouteConstante(tabNomCons, type);
+        }
+    }
+
+    private String rechercheType(String s) {
+        if(s.contains("\"")) { return "Chaine de caractere";  }
+        else if(s.contains("\'")) { return "Caractere";       }
+        else if(s.contains("," )) { return "Double";          }
+        else if(s.matches("[0-9]+")) { return "Entier"; }
+        else if(s.toLowerCase().equals("vrai") || s.toLowerCase().equals("faux")) {
+            return "booleen";
+        }
+        else {
+            System.out.println("Variable non trouvable");
+            return "";
+        }
+    }
+
+    private void ajouteConstante(String[] tab, String type) {
+        type = type.toLowerCase();
+        String s = "";
+        boolean suivi = false;
+        for(int i=0; i<tab.length; i++) {
+            switch(type) {
+                case "booleen" : alConstante.add(new Booleen(tab[i], suivi, true)); break;
+                case "caractere" : alConstante.add(new Caractere(tab[i], suivi, true)); break;
+                case "chaine de caractere" : alConstante.add(new Chaine(tab[i], suivi, true)); break;
+                case "entier" : alConstante.add(new Entier(tab[i], suivi, true)); break;
+                case "reel" : alConstante.add(new Reel(tab[i], suivi, true)); break;
+                default :
+                    System.out.println("ZBEUB");break;
             }
         }
     }
 
-    public void chercherVariables(HashMap<Integer, String> numLignes) {
-        for(Integer i:numLignes.keySet()) {
-            if(numLignes.get(i).toUpperCase().contains("VARIABLE")) {
-                i++;
-                while(!numLignes.get(i).toUpperCase().contains("DEBUT")) {
-                    ArrayList<String> alVar    = new ArrayList<String>();
-                    String s = numLignes.get(i).replaceAll(",", " ");
-                    String sTemp;
-                    String type="";
-                    Scanner sc = new Scanner(s);
-                    if(sc.hasNext()) {
-                        while (!(sTemp = sc.next()).equals(":")) {
-                            System.out.println(sTemp);
-                            alVar.add(sTemp);
-                        }
-
-                        type = sc.next().toLowerCase();
-                    }
-
-                    for(String sVar:alVar) {
-                        switch(type) {
-                            case "booleen" : alDonnee.add(new Booleen(sVar, true, false)); break;
-                            case "caractere" : alDonnee.add(new Caractere(sVar, true, false)); break;
-                            case "chaine" : alDonnee.add(new Chaine(sVar, true, false)); break;
-                            case "chaine de caractere" : alDonnee.add(new Chaine(sVar, true, false)); break;
-                            case "entier" : alDonnee.add(new Entier(sVar, true, false)); break;
-                            case "reel" : alDonnee.add(new Reel(sVar, true, false));
-                            default : break;
-                        }
-                    }
-                    i++;
+    public void ajouteVariable(String[] tab, String type) {
+        type = type.toLowerCase();
+        String s = "";
+        boolean suivi = false;
+        for(int i=0; i<tab.length; i++) {
+            System.out.println("Voulez-vous suivre la trace de la variable : " + tab[i] + " (o/n)");
+            int cpt=0;
+            do {
+                if(cpt==3) System.out.println("Veuillez entrer o ou n");
+                Scanner sc = new Scanner(System.in);
+                s = sc.next().toLowerCase();
+                if (s.equals("o")) {
+                    suivi = true;
                 }
+                if (s.equals("n")) {
+                    suivi = false;
+                }
+                cpt++;
+            }while(!s.equals("o") && !s.equals("n"));
+            switch(type) {
+                case "booleen" : alVariable.add(new Booleen(tab[i], suivi, false)); break;
+                case "caractere" : alVariable.add(new Caractere(tab[i], suivi, false)); break;
+                case "chaine de caractere" : alVariable.add(new Chaine(tab[i], suivi, false)); break;
+                case "entier" : alVariable.add(new Entier(tab[i], suivi, false)); break;
+                case "reel" : alVariable.add(new Reel(tab[i], suivi, false)); break;
+                default :break;
             }
         }
     }
 
-    public ArrayList<Donnee> getAlDonnee() {
-        return this.alDonnee;
+    public ArrayList<Donnee> getAlConstante() {
+        return alConstante;
     }
+    public ArrayList<Donnee> getAlVariable () { return alVariable;  }
 }
