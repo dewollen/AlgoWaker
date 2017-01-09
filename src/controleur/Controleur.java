@@ -89,11 +89,11 @@ public class Controleur {
             }
             System.out.println("CONSTANTES");
             for(int zbeub=0; zbeub<traducteur.getAlConstante().size(); zbeub++){
-                System.out.println(traducteur.getAlConstante().get(zbeub).getNom());
+                System.out.println(traducteur.getAlConstante().get(zbeub).getNom() + "   " + traducteur.getAlConstante().get(zbeub).getType());
             }
             System.out.println("VARIABLES");
             for(int zbeub=0; zbeub<traducteur.getAlVariable().size(); zbeub++){
-                System.out.println(traducteur.getAlVariable().get(zbeub).getNom());
+                System.out.println(traducteur.getAlVariable().get(zbeub).getNom() + "   " + traducteur.getAlVariable().get(zbeub).getType());
             }
         }
     }
