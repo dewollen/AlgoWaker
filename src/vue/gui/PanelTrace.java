@@ -17,7 +17,7 @@ public class PanelTrace extends JScrollPane {
     private JTable traceVariables;
     private ArrayList<Donnee> alDonnees;
 
-    public PanelTrace() {
+    PanelTrace() {
         this.alDonnees = new ArrayList<>();
 
         this.traceVariables = new JTable(new ModeleDonnees());
@@ -26,11 +26,11 @@ public class PanelTrace extends JScrollPane {
         this.setViewportView(this.traceVariables);
     }
 
-    public void setVariablesATracer(ArrayList<Donnee> donnees) {
-        this.alDonnees = donnees;
+    public void setTraceVariables(ArrayList<Donnee> alDonnees) {
+        this.alDonnees = alDonnees;
     }
 
-    public void majIHM() {
+    void majIHM() {
         this.traceVariables.repaint();
     }
 
@@ -46,7 +46,7 @@ public class PanelTrace extends JScrollPane {
 
     /**
      * Classe interne permettant de gérer le format du tableau de suivi des variables.
-     * Permet également de ne pas pouvoir modifier les valeurs.
+     * Permet également de ne pas pouvoir modifier les valeurs durant l'exécution.
      */
     private class ModeleDonnees extends AbstractTableModel {
         private final String[] ENTETE = {"NOM", "TYPE", "VALEUR"};
