@@ -29,7 +29,7 @@ public class Traducteur {
         this.lecteur = lecteur;
 
         this.creeCons  = false;
-        this.creeVar   = true;
+        this.creeVar   = false;
         this.debutAlgo = false;
 
         this.numLignes = lecteur.getNumLignes();
@@ -42,38 +42,34 @@ public class Traducteur {
         String[] tabLigne;
         String   type = "";
         String ligneCourante = this.numLignes.get(ligne).replaceAll("◄—", "<-");
-        if(ligneCourante.toLowerCase().contains("constante")) {
-            creeCons = true;
-        }
-        if(ligneCourante.toLowerCase().contains("variable")) {
-            creeCons = false;
-            creeVar = true;
-        }
-        if(ligneCourante.toLowerCase().contains("debut")) {
-            creeVar = false;
-            debutAlgo = true;
-        }
-        if(debutAlgo) {
+        if(!ligneCourante.equals("")) {
+            if (ligneCourante.toLowerCase().contains("constante")) {
+                creeCons = true;
+            } else if (ligneCourante.toLowerCase().contains("variable")) {
+                creeCons = false;
+                creeVar = true;
+            } else if (ligneCourante.toLowerCase().contains("debut")) {
+                creeVar = false;
+                debutAlgo = true;
+            } else if (debutAlgo) {
 
-        }
-        else if(creeVar) {
-            tabLigne = ligneCourante.split(":");
-            tabLigne[0] = tabLigne[0].replaceAll("[\t ]", "");
-            System.out.println(tabLigne[0]);
-            tabLigne[1] = tabLigne[1].replaceAll(" ", "");
-            String[] tabNomVar = tabLigne[0].split(",");
-            type = tabLigne[1];
+            } else if (creeVar) {
+                tabLigne = ligneCourante.split(":");
+                tabLigne[0] = tabLigne[0].replaceAll("[\t ]", "");
+                tabLigne[1] = tabLigne[1].replaceAll(" ", "");
+                String[] tabNomVar = tabLigne[0].split(",");
+                type = tabLigne[1];
 
-            ajouteVariable(tabNomVar, type);
-        }
-        else if(creeCons) {
-            tabLigne = ligneCourante.split("<-");
-            tabLigne[0] = tabLigne[0].replaceAll("[\t ]", "");
-            tabLigne[1] = tabLigne[1].replaceAll(" ", "");
-            String[] tabNomCons = tabLigne[0].split(",");
-            type = rechercheType(tabLigne[1]);
+                ajouteVariable(tabNomVar, type);
+            } else if (creeCons) {
+                tabLigne = ligneCourante.split("<-");
+                tabLigne[0] = tabLigne[0].replaceAll("[\t ]", "");
+                tabLigne[1] = tabLigne[1].replaceAll(" ", "");
+                String[] tabNomCons = tabLigne[0].split(",");
+                type = rechercheType(tabLigne[1]);
 
-            ajouteConstante(tabNomCons, type);
+                ajouteConstante(tabNomCons, type);
+            }
         }
     }
 

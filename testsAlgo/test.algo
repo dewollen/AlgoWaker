@@ -1,8 +1,9 @@
 ALGORITHME NomAlgo
-constante: 
+constante:
 
 variable:
-	x, y : entier 
+	x, y : entier
+	zbeub : reel
 
 DEBUT 
     x ◄— 5
