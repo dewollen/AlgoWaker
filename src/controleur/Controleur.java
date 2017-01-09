@@ -1,4 +1,5 @@
 package controleur;
+import com.sun.org.apache.xpath.internal.SourceTree;
 import metier.Traducteur;
 import util.donnee.Entier;
 import vue.IVue;
@@ -43,10 +44,10 @@ public class Controleur {
 
         controleur.traducteur = new Traducteur(controleur.lecteur);
 
-        controleur.traducteur.chercherConstantes(controleur.lecteur.getNumLignes());
-        controleur.traducteur.chercherVariables(controleur.lecteur.getNumLignes());
+        //controleur.traducteur.traiteLigne(4);
+        System.out.println(controleur.traducteur.getAlConstante());
 
-        controleur.vue.setAlTraceVariables(controleur.traducteur.getAlDonnee());
+        controleur.vue.setAlTraceVariables(controleur.traducteur.getAlConstante());
 
         controleur.vue.setNumLignes(controleur.lecteur.getNumLignes());
 
@@ -80,8 +81,20 @@ public class Controleur {
             System.out.print("Action : ");
             Scanner scClavier = new Scanner(System.in);
 
-            if(scClavier.nextLine().equals(""))
-                System.out.println(this.vue.afficher(i.next()));
+            if(scClavier.nextLine().equals("")) {
+                Integer ligneTraite = i.next();
+                traducteur.traiteLigne(ligneTraite);
+
+                System.out.println(this.vue.afficher(ligneTraite));
+            }
+            System.out.println("CONSTANTES");
+            for(int zbeub=0; zbeub<traducteur.getAlConstante().size(); zbeub++){
+                System.out.println(traducteur.getAlConstante().get(zbeub).getNom());
+            }
+            System.out.println("VARIABLES");
+            for(int zbeub=0; zbeub<traducteur.getAlVariable().size(); zbeub++){
+                System.out.println(traducteur.getAlVariable().get(zbeub).getNom());
+            }
         }
     }
 }
