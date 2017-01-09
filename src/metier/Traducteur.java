@@ -74,12 +74,12 @@ public class Traducteur {
     }
 
     private String rechercheType(String s) {
-        if(s.contains("\"")) { return "Chaine de caractere";  }
-        else if(s.contains("\'")) { return "Caractere";       }
-        else if(s.contains("," )) { return "Double";          }
-        else if(s.matches("[0-9]+")) { return "Entier"; }
+        if(s.contains("\"")) { return "Chaîne de caractère";  }
+        else if(s.contains("\'")) { return "caractère";       }
+        else if(s.contains("," )) { return "réel";          }
+        else if(s.matches("[0-9]+")) { return "entier"; }
         else if(s.toLowerCase().equals("vrai") || s.toLowerCase().equals("faux")) {
-            return "booleen";
+            return "booléen";
         }
         else {
             System.out.println("Variable non trouvable");
