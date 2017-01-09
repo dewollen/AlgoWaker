@@ -1,15 +1,13 @@
 package controleur;
-import com.sun.org.apache.xpath.internal.SourceTree;
+
 import metier.Traducteur;
-import util.donnee.Entier;
+import util.Lecteur;
 import vue.IVue;
 import vue.cui.CUI;
+import vue.gui.GUI;
 
-import util.donnee.Donnee;
-import util.Lecteur;
-
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.awt.*;
+import java.io.File;
 import java.util.Scanner;
 
 /**
@@ -20,81 +18,66 @@ import java.util.Scanner;
  */
 public class Controleur {
     private IVue vue;
-    private Lecteur           lecteur;
-    private ArrayList<Donnee> donnees;
-    private Traducteur        traducteur;
+    private Lecteur lecteur;
+    private Traducteur traducteur;
 
-    public Controleur(IVue vue) {
-        this.vue     = vue;
-        this.lecteur = null;
-        this.donnees = null;
+    private int ligneCourante;
+
+    public Controleur(boolean modeGraphique) {
+        this.vue = modeGraphique ? new GUI(this) : new CUI(this);
+        this.lecteur = new Lecteur(this.vue.ouvrirFichier());
+        this.traducteur = new Traducteur();
+
+        this.ligneCourante = 0;
+
+        this.initVue();
+    }
+
+    private void initVue() { // la vue n'a pas besoin d'alpseudo code, on la lui passe dans afficher()
+        // Paramètres de la vue
+        // this.vue.setAlTraceVariables(this.traducteur.getAlVariable());
+        //this.vue.setAlPseudoCode(this.lecteur.getAlPseudoCode());
+        // this.vue.setAlTraceVariables(this.donnees);
     }
 
     public static void main(String[] args) {
-        Controleur controleur;
-        /*System.out.println("Voulez-vous lancer le programme en mode Graphique ? (O/N)");
-        Scanner scClavier = new Scanner(System.in);
-
-        if(scClavier.hasNext() && scClavier.next().toUpperCase().equals("O"))
-            controleur = new Controleur(new GUI());
-        else*/
-        controleur = new Controleur(new CUI());
-
-        controleur.ouvrirFichier();
-
-        controleur.traducteur = new Traducteur(controleur.lecteur);
-
-        //controleur.traducteur.traiteLigne(4);
-        System.out.println(controleur.traducteur.getAlConstante());
-
-        controleur.vue.setAlTraceVariables(controleur.traducteur.getAlConstante());
-
-        controleur.vue.setNumLignes(controleur.lecteur.getNumLignes());
-
-        /*controleur.donnees = new ArrayList<Donnee>();
-        controleur.donnees.add(new Entier("x", true, false));
-        controleur.donnees.get(0).setValeur("5");
-        controleur.donnees.add(new Entier("y", true, false));
-        controleur.donnees.get(1).setValeur("7");
-
-        controleur.vue.setAlTraceVariables(controleur.donnees);*/
-
-
-        controleur.commencerLecture();
+        new Controleur(Controleur.demanderModeGraphique()).avancer();
     }
 
-    private void ouvrirFichier() {
+    private static boolean demanderModeGraphique() {
+        System.out.println("Voulez-vous lancer le programme en mode Graphique ? (O/N)");
+        Scanner scClavier = new Scanner(System.in);
+
+        return scClavier.hasNext() && scClavier.next().toUpperCase().equals("O");
+    }
+
+    public void ouvrirFichier() {
         this.lecteur = new Lecteur(this.vue.ouvrirFichier());
     }
 
-    private void selectionnerVariables() {
-        this.vue.afficherMessage("Quelles variables voulez-vous suivre via la trace des variables ?");
+    /**
+     * Avance dans le fichier
+     */
+    private void avancer() {
+        String ligne = this.lecteur.getTabLigneCode()[this.ligneCourante];
+
+        this.ligneCourante++;
+    }
+
+    private void reculer() {
 
     }
 
-    private void commencerLecture() {
-        Iterator<Integer> i = this.lecteur.getNumLignes().keySet().iterator();
-
-        System.out.println(this.vue.afficher(i.next()));
-
-        while(i.hasNext()) {
-            System.out.print("Action : ");
-            Scanner scClavier = new Scanner(System.in);
-
-            if(scClavier.nextLine().equals("")) {
-                Integer ligneTraite = i.next();
-                traducteur.traiteLigne(ligneTraite);
-
-                System.out.println(this.vue.afficher(ligneTraite));
-            }
-            System.out.println("CONSTANTES");
-            for(int zbeub=0; zbeub<traducteur.getAlConstante().size(); zbeub++){
-                System.out.println(traducteur.getAlConstante().get(zbeub).getNom() + "   " + traducteur.getAlConstante().get(zbeub).getType());
-            }
-            System.out.println("VARIABLES");
-            for(int zbeub=0; zbeub<traducteur.getAlVariable().size(); zbeub++){
-                System.out.println(traducteur.getAlVariable().get(zbeub).getNom() + "   " + traducteur.getAlVariable().get(zbeub).getType());
-            }
+    public void afficherInfos() {
+        try {
+            if (Desktop.isDesktopSupported())
+                Desktop.getDesktop().browse(new File("").toURI());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
+
+    public void quitter() {
+        System.exit(-1);
     }
 }

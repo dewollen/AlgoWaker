@@ -10,7 +10,6 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Classe qui gère l'affichage en mode graphique (Graphical User Interface)
@@ -28,7 +27,7 @@ public class GUI extends JFrame implements IVue {
 
     private final String TITRE = "AlgoWaker";
 
-    private HashMap<Integer, String> numLignes;
+    private ArrayList<String> numLignes;
     private ArrayList<Donnee> alTraceVariables;
 
     //lol
@@ -92,7 +91,7 @@ public class GUI extends JFrame implements IVue {
     }
 
     @Override
-    public void setNumLignes(HashMap<Integer, String> numLignes) {
+    public void setNumLignes(ArrayList<String> numLignes) {
         this.numLignes = numLignes;
     }
 
