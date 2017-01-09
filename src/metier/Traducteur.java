@@ -113,6 +113,16 @@ public class Traducteur {
             return "Entier";
         } else if (s.toLowerCase().equals("vrai") || s.toLowerCase().equals("faux")) {
             return "booleen";
+        } else if (s.contains("\"")) {
+            return "Chaîne de caractère";
+        } else if (s.contains("\'")) {
+            return "caractère";
+        } else if (s.contains(",")) {
+            return "réel";
+        } else if (s.matches("[0-9]+")) {
+            return "entier";
+        } else if (s.toLowerCase().equals("vrai") || s.toLowerCase().equals("faux")) {
+            return "booléen";
         } else {
             System.out.println("Variable non trouvable");
             return "";
