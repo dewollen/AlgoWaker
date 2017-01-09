@@ -12,8 +12,17 @@ import java.util.Scanner;
  * @version 2017-01-05
  */
 public class Lecteur {
+
+    /**
+     * HashMap comportant les lignes du pseudo-code
+     * @see Lecteur#getNumLignes()
+     */
     private HashMap<Integer, String> numLignes;
 
+    /**
+     * Constructeur de la classe Lecteur
+     * @param fichier Fichier que l'utilisateur veut lire
+     */
     public Lecteur(String fichier) {
         this.numLignes = new HashMap<Integer, String>();
 
@@ -31,6 +40,10 @@ public class Lecteur {
         }
     }
 
+    /**
+     * Permet de retourner la HashMap numLignes
+     * @return numLignes
+     */
     public HashMap<Integer, String> getNumLignes() {
         return numLignes;
     }
