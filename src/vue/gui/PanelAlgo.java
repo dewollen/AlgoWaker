@@ -24,6 +24,8 @@ public class PanelAlgo extends JScrollPane {
     private final StyleContext contexte = StyleContext.getDefaultStyleContext();
     private final AttributeSet colorationBleue = contexte.addAttribute(contexte.getEmptySet(), StyleConstants.Foreground, Color.BLUE);
 
+    //lol
+
     PanelAlgo(HashMap<Integer, String> numLignes) {
         this.numLignes = numLignes;
 

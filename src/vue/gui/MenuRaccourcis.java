@@ -16,6 +16,8 @@ import java.awt.event.KeyEvent;
 class MenuRaccourcis extends JMenuBar {
     private Controleur controleur;
 
+    //lol
+
     MenuRaccourcis(Controleur controleur) {
         this.controleur = controleur;
 

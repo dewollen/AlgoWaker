@@ -26,6 +26,8 @@ public class PanelConsole extends JPanel {
     private final StyleContext contexte = StyleContext.getDefaultStyleContext();
     private AttributeSet couleurEcrire;
 
+    //lol
+
     PanelConsole() {
         this.alInterraction = new ArrayList<>();
 

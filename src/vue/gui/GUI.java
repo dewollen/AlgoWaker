@@ -31,6 +31,8 @@ public class GUI extends JFrame implements IVue {
     private HashMap<Integer, String> numLignes;
     private ArrayList<Donnee> alTraceVariables;
 
+    //lol
+
     private Controleur controleur;
 
     public GUI(Controleur controleur) {
