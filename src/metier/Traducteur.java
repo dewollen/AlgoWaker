@@ -44,16 +44,25 @@ public class Traducteur {
         String ligneCourante = this.numLignes.get(ligne).replaceAll("◄—", "<-");
         if(!ligneCourante.equals("")) {
             if (ligneCourante.toLowerCase().contains("constante")) {
+
                 creeCons = true;
+
             } else if (ligneCourante.toLowerCase().contains("variable")) {
+
                 creeCons = false;
                 creeVar = true;
+
             } else if (ligneCourante.toLowerCase().contains("debut")) {
+
                 creeVar = false;
                 debutAlgo = true;
+
             } else if (debutAlgo) {
 
+
+
             } else if (creeVar) {
+
                 tabLigne = ligneCourante.split(":");
                 tabLigne[0] = tabLigne[0].replaceAll("[\t ]", "");
                 tabLigne[1] = tabLigne[1].replaceAll(" ", "");
@@ -61,7 +70,9 @@ public class Traducteur {
                 type = tabLigne[1];
 
                 ajouteVariable(tabNomVar, type);
+
             } else if (creeCons) {
+
                 tabLigne = ligneCourante.split("<-");
                 tabLigne[0] = tabLigne[0].replaceAll("[\t ]", "");
                 tabLigne[1] = tabLigne[1].replaceAll(" ", "");
@@ -76,7 +87,7 @@ public class Traducteur {
     private String rechercheType(String s) {
         if(s.contains("\"")) { return "Chaine de caractere";  }
         else if(s.contains("\'")) { return "Caractere";       }
-        else if(s.contains("," )) { return "Double";          }
+        else if(s.contains("," )) { return "Reel";          }
         else if(s.matches("[0-9]+")) { return "Entier"; }
         else if(s.toLowerCase().equals("vrai") || s.toLowerCase().equals("faux")) {
             return "booleen";

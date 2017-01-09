@@ -1,6 +1,7 @@
 ALGORITHME NomAlgo
 constante:
-
+    C ◄— "COOL"
+    K ◄— 45
 variable:
 	x, y : entier
 	zbeub : reel
