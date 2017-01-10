@@ -3,6 +3,7 @@ package metier;
 import bsh.EvalError;
 import bsh.Interpreter;
 import util.donnee.*;
+import vue.IVue;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -26,135 +27,118 @@ public class Traducteur {
     // $$$$$$$$$$$$$$$$$$$$$$$$$
     // $$$$$$$$$$$$$$$$$$$$$$$$$
     // $$$$$$$$$$$$$$$$$$$$$$$$$
+    private IVue vue;
 
-    private ArrayList<Donnee> alEtatConstante;
+    private ArrayList<Donnee> alConstante;
     private ArrayList<ArrayList<Donnee>> alEtatVariable;
+    private ArrayList<String>  alConsole;
 
-    public Traducteur() {
+    public Traducteur(IVue vue) {
+        this.vue = vue;
         this.interpreter = new Interpreter();
 
-        this.alEtatConstante = new ArrayList<>();
+        this.alConstante = new ArrayList<>();
         this.alEtatVariable = new ArrayList<>();
+
+        this.alConsole = new ArrayList<>();
     }
 
-    public void initConstante(String ligne) {
+    /*public void initConstante(String ligne) {
 
     }
 
     public void initVariable(String ligne) {
 
+    }*/
+
+    public void initAttribut(String ligne, boolean creerCons) {
+        if(!ligne.equals("")) {
+            String[] tabLigne;
+            String type;
+
+            tabLigne = ligne.split("<-");
+            tabLigne[0] = tabLigne[0].replaceAll("[\t ]", "");
+            tabLigne[1] = tabLigne[1].replaceAll(" ", "");
+            String[] tabNomAttribut = tabLigne[0].split(",");
+
+            if (creerCons) {
+                type = rechercheType(tabLigne[1]);
+                ajouteConstante(tabNomAttribut, type, tabLigne[1]);
+            } else {
+                type = tabLigne[1];
+                this.alEtatVariable.add(ajouteVariable(tabNomAttribut, type));
+            }
+        }
     }
 
-    public void traiterLigne(String ligne) {
-        boolean creerCons = false;
-        boolean creerVar = false;
-        boolean debutAlgo = false;
+    public void traiterLigne(String ligne, int numLigne) {
 
-        String[] tabLigne;
-        String type = "";
-        String ligneCourante = ligne.replaceAll("◄—", "<-");
-        if (!ligneCourante.equals("")) {
-            if (ligneCourante.toLowerCase().contains("constante")) {
-
-                creerCons = true;
-
-            } else if (ligneCourante.toLowerCase().contains("variable")) {
-
-                creerCons = false;
-                creerVar = true;
-
-            } else if (ligneCourante.toLowerCase().contains("debut")) {
-
-                creerVar = false;
-                debutAlgo = true;
-
-            } else if (debutAlgo) {
-
-                // Affectation !!!
-                if (ligneCourante.contains("<-")) {
-                    String[] tabAffectation = ligneCourante.split("<-");
-                    tabAffectation[0] = tabAffectation[0].replaceAll("[\t ]", "");
-                    tabAffectation[1] = tabAffectation[1].replaceAll(" ", "");
-                    System.out.println(tabAffectation[0] + " --> " + tabAffectation[1]);
-                    try {
-                        interpreter.eval("" + tabAffectation[0] + " = " + tabAffectation[1]);
-                        System.out.println(interpreter.get(tabAffectation[0]));
-                        for (int i = 0; i < alVariable.size(); i++) {
-                            if (alEtatVariable.get(i).getNom().equals(tabAffectation[0])) {
-                                alEtatVariable.get(i).setValeur("" + interpreter.get(tabAffectation[0]));
-                            }
-                        }
-                    } catch (EvalError evalError) {
-                        evalError.printStackTrace();
+        // Affectation !!!
+        if (ligne.contains("<-")) {
+            String[] tabAffectation = ligne.split("<-");
+            tabAffectation[0] = tabAffectation[0].replaceAll("[\t ]", "");
+            tabAffectation[1] = tabAffectation[1].replaceAll(" ", "");
+            System.out.println(tabAffectation[0] + " --> " + tabAffectation[1]);
+            try {
+                ArrayList<Donnee> alVariable = alEtatVariable.get(numLigne);
+                interpreter.eval("" + tabAffectation[0] + " = " + tabAffectation[1]);
+                System.out.println(interpreter.get(tabAffectation[0]));
+                for (int i = 0; i < alVariable.size(); i++) {
+                    if (alVariable.get(i).getNom().equals(tabAffectation[0])) {
+                        alVariable.get(i).setValeur("" + interpreter.get(tabAffectation[0]));
                     }
                 }
+            } catch (EvalError evalError) {
+                evalError.printStackTrace();
+            }
+        }
 
-                // ECRIRE !!!
-                if (ligneCourante.contains("\tecrire ")) {
-                    String[] tabEcrire = ligneCourante.split("[()]");
-                    tabEcrire[1] = tabEcrire[1].replaceAll(" ", "");
-                    String[] tabSOP = tabEcrire[1].split("&");
+        // ECRIRE !!!
+        if (ligne.contains("\tecrire ")) {
+            String[] tabEcrire = ligne.split("[()]");
+            tabEcrire[1] = tabEcrire[1].replaceAll(" ", "");
+            String[] tabSOP = tabEcrire[1].split("&");
 
-                    try {
-                        String sTemp = "";
-                        for (int i = 0; i < tabSOP.length; i++) {
-                            if (tabSOP[i].contains("\"")) {
-                                sTemp += tabSOP[i];
-                            } else {
-                                sTemp += interpreter.get(tabSOP[i]);
-                            }
-                        }
-                        System.out.println(sTemp);
-                    } catch (EvalError evalError) {
-                        evalError.printStackTrace();
+            try {
+                String sTemp = "";
+                for (int i = 0; i < tabSOP.length; i++) {
+                    if (tabSOP[i].contains("\"")) {
+                        sTemp += tabSOP[i].replaceAll("\"", "");
+                    } else {
+                        sTemp += interpreter.get(tabSOP[i]);
                     }
                 }
+                alConsole.add(sTemp);
+            } catch (EvalError evalError) {
+                evalError.printStackTrace();
+            }
+        }
 
-            } else if (creerVar) {
-
-                tabLigne = ligneCourante.split(":");
-                tabLigne[0] = tabLigne[0].replaceAll("[\t ]", "");
-                tabLigne[1] = tabLigne[1].replaceAll(" ", "");
-                String[] tabNomVar = tabLigne[0].split(",");
-                type = tabLigne[1];
-
-                ajouteVariable(tabNomVar, type);
-
-            } else if (creerCons) {
-
-                tabLigne = ligneCourante.split("<-");
-                tabLigne[0] = tabLigne[0].replaceAll("[\t ]", "");
-                tabLigne[1] = tabLigne[1].replaceAll(" ", "");
-                String[] tabNomCons = tabLigne[0].split(",");
-                type = rechercheType(tabLigne[1]);
-
-                ajouteConstante(tabNomCons, type, tabLigne[1]);
+        // LIRE !!!
+        if(ligne.contains("\tlire ")){
+            String valeur = vue.lire();
+            String variable = ligne.substring(ligne.indexOf("(")+1,ligne.indexOf("("));
+            try {
+                ArrayList<Donnee> alVariable = alEtatVariable.get(numLigne);
+                interpreter.eval("" + variable + "=" + valeur);
+                for (int i = 0; i < alEtatVariable.size(); i++) {
+                    if (alVariable.get(i).getNom().equals(variable))
+                        alVariable.get(i).setValeur("" + interpreter.get(variable));
+                }
+            }
+            catch (EvalError evalError) {
+                evalError.printStackTrace();
             }
         }
     }
 
     private String rechercheType(String s) {
-        if (s.contains("\"")) {
-            return "Chaine de caractere";
-        } else if (s.contains("\'")) {
-            return "Caractere";
-        } else if (s.contains(",")) {
-            return "Reel";
-        } else if (s.matches("[0-9]+")) {
-            return "Entier";
-        } else if (s.toLowerCase().equals("vrai") || s.toLowerCase().equals("faux")) {
-            return "booleen";
-        } else if (s.contains("\"")) {
-            return "Chaîne de caractère";
-        } else if (s.contains("\'")) {
-            return "caractère";
-        } else if (s.contains(",")) {
-            return "réel";
-        } else if (s.matches("[0-9]+")) {
-            return "entier";
-        } else if (s.toLowerCase().equals("vrai") || s.toLowerCase().equals("faux")) {
-            return "booléen";
-        } else {
+        if      (s.contains("\"")   ) { return "Chaine de caractere"; }
+        else if (s.contains("\'")   ) { return "Caractere";           }
+        else if (s.contains(",")    ) { return "Reel";                }
+        else if (s.matches("[0-9]+")) { return "Entier";              }
+        else if (s.toLowerCase().equals("vrai") || s.toLowerCase().equals("faux")) { return "booleen"; }
+        else {
             System.out.println("Variable non trouvable");
             return "";
         }
@@ -162,63 +146,52 @@ public class Traducteur {
 
     private void ajouteConstante(String[] tab, String type, String valeur) {
         type = type.toLowerCase();
-        String s = "";
+        String typeTemp = "";
         boolean suivi = false;
         for (int i = 0; i < tab.length; i++) {
             switch (type) {
                 case "booleen":
-                    alEtatConstante.add(new Booleen(tab[i], suivi, true));
-                    try {
-                        interpreter.eval("final boolean " + tab[i].toUpperCase() + " = " + valeur);
-                    } catch (EvalError evalError) {
-                        evalError.printStackTrace();
-                    }
+                    alConstante.add(new Booleen(tab[i], suivi, true));
+                    typeTemp = "final boolean ";
                     break;
 
                 case "caractere":
-                    alEtatConstante.add(new Caractere(tab[i], suivi, true));
-                    try {
-                        interpreter.eval("final char " + tab[i].toUpperCase() + " = " + valeur);
-                    } catch (EvalError evalError) {
-                        evalError.printStackTrace();
-                    }
+                    alConstante.add(new Caractere(tab[i], suivi, true));
+                    typeTemp = "final char ";
                     break;
 
                 case "chaine de caractere":
-                    alEtatConstante.add(new Chaine(tab[i], suivi, true));
-                    try {
-                        interpreter.eval("final String " + tab[i].toUpperCase() + " = " + valeur);
-                    } catch (EvalError evalError) {
-                        evalError.printStackTrace();
-                    }
+                    alConstante.add(new Chaine(tab[i], suivi, true));
+                    typeTemp = "final String ";
                     break;
 
                 case "entier":
-                    alEtatConstante.add(new Entier(tab[i], suivi, true));
-                    try {
-                        interpreter.eval("final int " + tab[i].toUpperCase() + " = " + valeur);
-                    } catch (EvalError evalError) {
-                        evalError.printStackTrace();
-                    }
+                    alConstante.add(new Entier(tab[i], suivi, true));
+                    typeTemp = "final int ";
                     break;
 
                 case "reel":
-                    alEtatConstante.add(new Reel(tab[i], suivi, true));
-                    try {
-                        interpreter.eval("final double " + tab[i].toUpperCase() + " = " + valeur);
-                    } catch (EvalError evalError) {
-                        evalError.printStackTrace();
-                    }
+                    alConstante.add(new Reel(tab[i], suivi, true));
+                    typeTemp = "final double";
                     break;
 
                 default:
-                    System.out.println("TYPE NON TROUVE");
+                    typeTemp = "error";
                     break;
+            }
+
+            if(!typeTemp.equals("error")) {
+                try {
+                    interpreter.eval(typeTemp + tab[i].toUpperCase() + " = " + valeur);
+                } catch (EvalError evalError) {
+                    evalError.printStackTrace();
+                }
             }
         }
     }
 
-    public void ajouteVariable(String[] tab, String type) {
+    public ArrayList<Donnee> ajouteVariable(String[] tab, String type) {
+        ArrayList<Donnee> alVariable = new ArrayList<Donnee>();
         type = type.toLowerCase();
         String s = "";
         boolean suivi = false;
@@ -237,63 +210,58 @@ public class Traducteur {
                 }
                 cpt++;
             } while (!s.equals("o") && !s.equals("n"));
+
+            String typeTemp = "";
             switch (type) {
                 case "booleen":
-                    alEtatVariable.add(new Booleen(tab[i], suivi, false));
-                    try {
-                        interpreter.eval("boolean " + tab[i]);
-                    } catch (EvalError evalError) {
-                        evalError.printStackTrace();
-                    }
+                    alVariable.add(new Booleen(tab[i], suivi, false));
+                    typeTemp = "boolean ";
                     break;
 
                 case "caractere":
-                    alEtatVariable.add(new Caractere(tab[i], suivi, false));
-                    try {
-                        interpreter.eval("char " + tab[i]);
-                    } catch (EvalError evalError) {
-                        evalError.printStackTrace();
-                    }
+                    alVariable.add(new Caractere(tab[i], suivi, false));
+                    typeTemp = "char ";
                     break;
 
                 case "chaine de caractere":
-                    alEtatVariable.add(new Chaine(tab[i], suivi, false));
-                    try {
-                        interpreter.eval("String " + tab[i]);
-                    } catch (EvalError evalError) {
-                        evalError.printStackTrace();
-                    }
+                    alVariable.add(new Chaine(tab[i], suivi, false));
+                    typeTemp = "String ";
                     break;
 
                 case "entier":
-                    alEtatVariable.add(new Entier(tab[i], suivi, false));
-                    try {
-                        interpreter.eval("int " + tab[i]);
-                    } catch (EvalError evalError) {
-                        evalError.printStackTrace();
-                    }
+                    alVariable.add(new Entier(tab[i], suivi, false));
+                    typeTemp = "int ";
                     break;
 
                 case "reel":
-                    alEtatVariable.add(new Reel(tab[i], suivi, false));
-                    try {
-                        interpreter.eval("double " + tab[i]);
-                    } catch (EvalError evalError) {
-                        evalError.printStackTrace();
-                    }
+                    alVariable.add(new Reel(tab[i], suivi, false));
+                    typeTemp = "double ";
                     break;
 
                 default:
+                    typeTemp = "error";
                     break;
             }
+
+            if(!typeTemp.equals("error")) {
+                try {
+                    interpreter.eval(typeTemp + tab[i]);
+                }catch (EvalError evalError) { evalError.printStackTrace(); }
+            }
         }
+
+        return alVariable;
+    }
+
+    public ArrayList<ArrayList<Donnee>> getAlEtatVariable() {
+        return alEtatVariable;
     }
 
     public ArrayList<Donnee> getAlConstante() {
-        return this.alEtatConstante;
+        return alConstante;
     }
 
-    public ArrayList<ArrayList<Donnee>> getAlVariable() {
-        return this.alEtatVariable;
+    public ArrayList<String> getAlConsole() {
+        return alConsole;
     }
 }
