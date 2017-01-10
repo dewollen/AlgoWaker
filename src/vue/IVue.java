@@ -14,14 +14,16 @@ public interface IVue {
     /**
      * Tableau de toutes les conditions et interaction avec l'utilisateur possible ainsi que leur couleur
      */
-    String[][] motsCles = new String[][]{{"si", "\u001B[34m"},
-            {"alors", "\u001B[34m"},
-            {"sinon", "\u001B[34m"},
-            {"fsi", "\u001B[34m"},
-            {"ecrire", "\u001B[34m"},
-            {"lire", "\u001B[33m"},
+    String[][] motsCles = new String[][]
+            {{"si",     "\u001B[34m"},
+            {"alors",   "\u001B[34m"},
+            {"sinon",   "\u001B[34m"},
+            {"fsi",     "\u001B[34m"},
+            {"ecrire",  "\u001B[34m"},
+            {"lire",    "\u001B[33m"},
             {"tantque", "\u001B[34m"},
-            {"ftq", "\u001B[34m"}};
+            {"faire",   "\u001B[34m"},
+            {"ftq",     "\u001B[34m"}};
 
     /**
      * Permet d'initialiser le fichier que l'utilisateur choisi

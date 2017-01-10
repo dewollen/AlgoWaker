@@ -158,6 +158,21 @@ public class Traducteur {
         } else {
             alEtatVariable.add(alVarTemp);
         }
+
+        // SI/SINON !!!
+        /*if(ligne.contains("\tsi ")){
+            String verif = ligne.substring(ligne.indexOf("si")+1,ligne.indexOf("alors"));
+
+            verif = verif.replaceAll(" ","").replaceAll("=","==");
+            if(!(interpreter.eval(verif)))
+            {
+                if(!ligne.contains("\tsinon "))
+                {
+                    System.out.println("condition non verifier !");
+                }
+            }
+
+        }*/
     }
 
     private String rechercheType(String s) {
