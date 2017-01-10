@@ -147,9 +147,11 @@ public class Traducteur {
                 try {
                     ArrayList<Donnee> alVariable = alEtatVariable.get(numLigne);
                     interpreter.eval("" + variable + "=" + valeur);
-                    for (int i = 0; i < alEtatVariable.size(); i++) {
+                    for (int i = 0; i < alVariable.size(); i++) {
+                        System.out.println(alVariable.size() + "" + i);
                         if (alVariable.get(i).getNom().equals(variable))
                             alVariable.get(i).setValeur("" + interpreter.get(variable));
+                            alVariable.get(i).getValeur();
                     }
                 } catch (EvalError evalError) {
                     evalError.printStackTrace();

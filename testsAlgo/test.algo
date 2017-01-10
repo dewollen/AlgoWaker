@@ -14,7 +14,8 @@ DEBUT
  
 	si x = 5 alors 
  
-		ecrire ( "etape 1" ) 
+		ecrire ( "etape 1" )
+		lire ( x )
  
 		si y = 2 alors 
 			ecrire ( "etape 2" ) 
