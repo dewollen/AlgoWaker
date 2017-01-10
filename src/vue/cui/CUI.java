@@ -75,7 +75,7 @@ public class CUI implements IVue {
      * @param nLigne       Numéro de la ligne actuel du pseudo-code
      */
     @Override
-    public void afficher(String[] tabLigneCode, Integer nLigne, ArrayList<Donnee> alDonnees) {
+    public void afficher(String[] tabLigneCode, Integer nLigne, ArrayList<Donnee> alDonnees, ArrayList<String> alConsole) {
         String tremas1 = new String(new char[10]).replace("\0", "¨");
         String tremas2 = new String(new char[87]).replace("\0", "¨");
         String tremas3 = new String(new char[48]).replace("\0", "¨");
@@ -83,9 +83,9 @@ public class CUI implements IVue {
         sRet += String.format("|  CODE  |%78s| DONNEES |\n", " ");
         sRet += tremas2 + " " + tremas3 + "\n";
 
-        ArrayList<String> alStringCode = this.formaterCode(tabLigneCode, nLigne);
-
+        ArrayList<String> alStringCode    = this.formaterCode(tabLigneCode, nLigne);
         ArrayList<String> alStringDonnees = this.formaterDonnees(alDonnees);
+
 
         Iterator<String> itCode = alStringCode.iterator();
         Iterator<String> itDonnees = alStringDonnees.iterator();
@@ -102,6 +102,9 @@ public class CUI implements IVue {
                 sRet += "\n";
         }
 
+        sRet += tremas2 + "\n\n";
+        sRet += tremas1 + "\n| CONSOLE |\n" + tremas2 + "\n";
+        sRet += this.formaterConsole(alConsole);
         sRet += tremas2;
 
         System.out.println(sRet);
@@ -180,16 +183,21 @@ public class CUI implements IVue {
         return alString;
     }
 
+    private String formaterConsole(ArrayList<String> alConsole) {
+        String sRet = "";
+        for(int i = 4; i > 0; i--) {
+            if(alConsole.size() - i >= 0)
+                sRet += String.format("| %-83s |\n", alConsole.get(alConsole.size() - i));
+            else
+                sRet += String.format("| %-83s |\n", " ");
+
+        }
+
+        return sRet;
+    }
+
     @Override
     public String lire() {
         return new Scanner(System.in).nextLine();
-    }
-
-    /**
-     *
-     */
-    @Override
-    public void majIhm() {
-
     }
 }

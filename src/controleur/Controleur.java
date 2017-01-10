@@ -49,7 +49,7 @@ public class Controleur {
     private void lancer() {
         this.traducteur.traiterLigne(this.lecteur.getTabLigneCode()[this.ligneCourante], this.ligneCourante);
 
-        this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, new ArrayList<Donnee>());
+        this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, new ArrayList<Donnee>(), new ArrayList<String>());
 
         if (this.vue instanceof CUI) {
             Scanner sc;
@@ -90,13 +90,13 @@ public class Controleur {
 
         this.traducteur.traiterLigne(this.lecteur.getTabLigneCode()[this.ligneCourante], this.ligneCourante);
 
-        this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlEtatVariable().get(this.ligneCourante));
+        this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlEtatVariable().get(this.ligneCourante), this.traducteur.getAlConsole());
     }
 
     public void reculer() {
         this.ligneCourante--;
 
-        this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlEtatVariable().get(this.ligneCourante));
+        this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlEtatVariable().get(this.ligneCourante), this.traducteur.getAlConsole());
 
     }
 

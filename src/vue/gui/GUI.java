@@ -65,7 +65,7 @@ public class GUI extends JFrame implements IVue {
     }
 
     @Override
-    public void afficher(String[] tabLigneCode, Integer coucou, ArrayList<Donnee> listeEtats) {
+    public void afficher(String[] tabLigneCode, Integer coucou, ArrayList<Donnee> listeEtats, ArrayList<String> alConsole) {
         this.pAlgo = new PanelAlgo(controleur);
         this.pTrace = new PanelTrace();
         this.pConsole = new PanelConsole();
@@ -87,11 +87,6 @@ public class GUI extends JFrame implements IVue {
         this.alTraceVariables = alTraceVariables;
     }
 
-    @Override
-    public void majIhm() {
-        this.pAlgo.majIHM();
-        this.pTrace.majIHM();
-    }
 
     @Override
     public String lire() {
