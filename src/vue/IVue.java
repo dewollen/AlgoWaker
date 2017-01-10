@@ -40,9 +40,8 @@ public interface IVue {
      *
      * @param tabLigneCode le pseudo-code à lire
      * @param nLigne       Numéro de la ligne actuel du pseudo-code
-     * @return La ligne créée
      */
-    String afficher(String[] tabLigneCode, Integer nLigne);
+    void afficher(String[] tabLigneCode, Integer nLigne, ArrayList<Donnee> alDonnees);
 
     /**
      * Permet d'initialiser l'ArrayList des variables
@@ -55,4 +54,6 @@ public interface IVue {
      * Permet de mettre à jour l'affichage
      */
     void majIhm();
+
+    String lire();
 }

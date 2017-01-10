@@ -1,9 +1,11 @@
 package vue.gui;
 
+import controleur.Controleur;
+import vue.IVue;
+
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
-import java.util.HashMap;
 
 /**
  * Classe qui sert à ...
@@ -12,66 +14,56 @@ import java.util.HashMap;
  * @version 05/01/2017
  */
 public class PanelAlgo extends JScrollPane {
+    private final Controleur controleur;
+
     private DocumentStyle doc;
     private JTextPane panelAffichage;
 
-    private HashMap<Integer, String> numLignes;
-
-    private int ligneCourante;
-
     private Style style;
 
-    private final StyleContext contexte = StyleContext.getDefaultStyleContext();
-    private final AttributeSet colorationBleue = contexte.addAttribute(contexte.getEmptySet(), StyleConstants.Foreground, Color.BLUE);
+    private final AttributeSet colorationMotCle;
 
-    //lol
-
-    PanelAlgo(HashMap<Integer, String> numLignes) {
-        this.numLignes = numLignes;
-
-        this.ligneCourante = 0;
+    PanelAlgo(Controleur controleur) {
+        this.controleur = controleur;
 
         this.doc = new DocumentStyle();
 
         this.style = doc.addStyle("Courante", null);
         StyleConstants.setBackground(this.style, new Color(102, 102, 102, 180));
 
+        StyleContext contexte = StyleContext.getDefaultStyleContext();
+        colorationMotCle = contexte.addAttribute(contexte.getEmptySet(), StyleConstants.Foreground, Color.BLUE);
+
         this.panelAffichage = new JTextPane(this.doc);
         this.panelAffichage.setEditable(false);
         this.panelAffichage.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-
-        DefaultCaret caret = (DefaultCaret) this.panelAffichage.getCaret();
-        caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 
         this.setViewportView(this.panelAffichage);
     }
 
     void majIHM() {
-        this.formaterCode();
-        this.avancerLigneCourante();
+
     }
 
     private void avancerLigneCourante() {
-        this.ligneCourante++;
+        int numLigne = 0;
 
-        if (this.ligneCourante > (getViewport().getSize().getHeight() - 2) / 15)
-            this.getVerticalScrollBar().setValue((int) (this.ligneCourante - getViewport().getSize().getHeight() / 15) * 15 + 7);
+        if (numLigne > (getViewport().getSize().getHeight() - 2) / 15)
+            this.getVerticalScrollBar().setValue((int) (numLigne - getViewport().getSize().getHeight() / 15) * 15 + 7);
     }
 
-    private void formaterCode() {
+    private void formaterCode(String[] tabLigneCode, Integer nLigne) {
         try {
             this.panelAffichage.setText(null);
 
             String sTemp;
 
-            for (int i = 0; i < this.numLignes.size(); i++) {
-                Style a = (i == this.ligneCourante) ? style : null;
-
-                sTemp = this.numLignes.get(i);
+            for (int i = 0; i < tabLigneCode.length; i++) {
+                sTemp = tabLigneCode[i];
                 sTemp = sTemp.replaceAll("\t", "   ");
                 sTemp = sTemp.replaceAll("◄—", "<-");
 
-                this.doc.insertString(this.doc.getLength(), String.format("%2d %-80s\n", i, sTemp), a);
+                this.doc.colorerCode(this.doc.getLength(), nLigne, String.format("%2d %-80s\n", i, sTemp));
             }
         } catch (BadLocationException e) {
             e.printStackTrace();
@@ -89,16 +81,32 @@ public class PanelAlgo extends JScrollPane {
     }
 
     private class DocumentStyle extends DefaultStyledDocument {
-        public void insertString(int offset, String str, AttributeSet a) throws BadLocationException {
+        private String regexMotsCles;
+
+        DocumentStyle() {
+            super();
+
+            this.creerListeMotsCles();
+        }
+
+        void creerListeMotsCles() {
+            String sTemp = "(";
+            for (int i = 0; i < IVue.motsCles.length; i++)
+                sTemp += IVue.motsCles[i][0] + "|";
+
+            regexMotsCles = sTemp + ")";
+        }
+
+        void colorerCode(int numeroLigne, int nLigne, String ligne) throws BadLocationException {
             int posInit = doc.getLength();
 
-            super.insertString(offset, str, a);
+            super.insertString(posInit, ligne, (numeroLigne == nLigne) ? style : null);
 
-            String[] mots = str.split("\\W+");
+            String[] mots = ligne.split("\\W+");
 
             for (String mot : mots) {
-                if (mot.matches("(ecrire|lire|si|fsi|sinon|alors)"))
-                    setCharacterAttributes(posInit + str.indexOf(mot), mot.length(), colorationBleue, false);
+                if (mot.matches(regexMotsCles))
+                    setCharacterAttributes(posInit + ligne.indexOf(mot), mot.length(), colorationMotCle, false);
             }
         }
     }

@@ -16,8 +16,6 @@ import java.awt.event.KeyEvent;
 class MenuRaccourcis extends JMenuBar {
     private Controleur controleur;
 
-    //lol
-
     MenuRaccourcis(Controleur controleur) {
         this.controleur = controleur;
 
@@ -42,6 +40,17 @@ class MenuRaccourcis extends JMenuBar {
         quitter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_MASK));
 
         this.add(fichier);
+
+        // Menu déroulant qui regroupe les actions
+        JMenu actions = new JMenu("Actions");
+
+        JMenuItem avancer = new JMenuItem("Avancer");
+
+        actions.add(avancer);
+
+        actions.addActionListener(new AvancerListener());
+
+        actions.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
 
         // Menu déroulant qui gère les fichiers
         JMenu aPropos = new JMenu("À Propos");
@@ -75,6 +84,13 @@ class MenuRaccourcis extends JMenuBar {
         @Override
         public void actionPerformed(ActionEvent e) {
             controleur.afficherInfos();
+        }
+    }
+
+    private class AvancerListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            controleur.avancer();
         }
     }
 }

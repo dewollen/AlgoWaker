@@ -44,7 +44,7 @@ public class Lecteur {
             scFichier = new Scanner(new File(fichier));
 
             while (scFichier.hasNextLine())
-                sTemp += scFichier.nextLine();
+                sTemp += scFichier.nextLine() + "\n";
         } catch (FileNotFoundException e) {
             System.err.println("Le fichier spécifié (" + fichier + ") est introuvable.");
 

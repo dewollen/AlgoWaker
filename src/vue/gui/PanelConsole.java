@@ -21,15 +21,13 @@ public class PanelConsole extends JPanel {
     private JTextPane panelAffichage;
     private JTextField barreEntreeValeur;
 
-    private ArrayList<String> alInterraction;
+    private ArrayList<String> alConsole;
 
     private final StyleContext contexte = StyleContext.getDefaultStyleContext();
     private AttributeSet couleurEcrire;
 
-    //lol
-
     PanelConsole() {
-        this.alInterraction = new ArrayList<>();
+        this.alConsole = new ArrayList<>();
 
         this.doc = new DocumentStyle();
 
@@ -56,10 +54,6 @@ public class PanelConsole extends JPanel {
         return this.getPreferredSize();
     }
 
-    void majIHM() {
-
-    }
-
     void ecrireLigne(String ligne) {
         try {
             this.doc.insertString(this.doc.getLength(), ligne, this.couleurEcrire);
@@ -74,8 +68,8 @@ public class PanelConsole extends JPanel {
         return null;
     }
 
-    public void setAlInterraction(ArrayList<String> alInterraction) {
-        this.alInterraction = alInterraction;
+    public void setAlConsole(ArrayList<String> alConsole) {
+        this.alConsole = alConsole;
     }
 
     private void colorerCode() {

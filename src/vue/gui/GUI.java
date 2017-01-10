@@ -7,8 +7,6 @@ import vue.IVue;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 /**
@@ -30,14 +28,10 @@ public class GUI extends JFrame implements IVue {
     private ArrayList<String> numLignes;
     private ArrayList<Donnee> alTraceVariables;
 
-    //lol
-
     private Controleur controleur;
 
     public GUI(Controleur controleur) {
         this.setTitle(this.TITRE);
-
-        this.addKeyListener(new ClavierEvt());
 
         this.controleur = controleur;
 
@@ -71,8 +65,8 @@ public class GUI extends JFrame implements IVue {
     }
 
     @Override
-    public String afficher(Integer nLigne) {
-        this.pAlgo = new PanelAlgo(this.numLignes);
+    public void afficher(String[] tabLigneCode, Integer coucou, ArrayList<Donnee> listeEtats) {
+        this.pAlgo = new PanelAlgo(controleur);
         this.pTrace = new PanelTrace();
         this.pConsole = new PanelConsole();
 
@@ -86,13 +80,6 @@ public class GUI extends JFrame implements IVue {
         this.add(pVertical);
 
         this.setVisible(true);
-
-        return null;
-    }
-
-    @Override
-    public void setNumLignes(ArrayList<String> numLignes) {
-        this.numLignes = numLignes;
     }
 
     @Override
@@ -104,20 +91,15 @@ public class GUI extends JFrame implements IVue {
     public void majIhm() {
         this.pAlgo.majIHM();
         this.pTrace.majIHM();
-        this.pConsole.majIHM();
+    }
+
+    @Override
+    public String lire() {
+        return null;
     }
 
     @Override
     public void setMinimumSize(Dimension minimumSize) {
         super.setMinimumSize(minimumSize);
-    }
-
-    private class ClavierEvt extends KeyAdapter {
-        @Override
-        public void keyPressed(KeyEvent event) {
-            int touche = event.getKeyCode();
-            if (touche == KeyEvent.VK_ENTER)
-                majIhm();
-        }
     }
 }

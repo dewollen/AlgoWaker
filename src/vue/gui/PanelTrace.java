@@ -17,8 +17,6 @@ public class PanelTrace extends JScrollPane {
     private JTable traceVariables;
     private ArrayList<Donnee> alDonnees;
 
-    //lol
-
     PanelTrace() {
         this.alDonnees = new ArrayList<>();
 

@@ -2,12 +2,14 @@ package controleur;
 
 import metier.Traducteur;
 import util.Lecteur;
+import util.donnee.Donnee;
 import vue.IVue;
 import vue.cui.CUI;
 import vue.gui.GUI;
 
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -26,7 +28,7 @@ public class Controleur {
     public Controleur(boolean modeGraphique) {
         this.vue = modeGraphique ? new GUI(this) : new CUI(this);
         this.lecteur = new Lecteur(this.vue.ouvrirFichier());
-        this.traducteur = new Traducteur();
+        this.traducteur = new Traducteur(this.vue);
 
         this.ligneCourante = 0;
 
@@ -41,7 +43,32 @@ public class Controleur {
     }
 
     public static void main(String[] args) {
-        new Controleur(Controleur.demanderModeGraphique()).avancer();
+        new Controleur(Controleur.demanderModeGraphique()).lancer();
+    }
+
+    private void lancer() {
+        this.traducteur.traiterLigne(this.lecteur.getTabLigneCode()[this.ligneCourante], this.ligneCourante);
+
+        this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, new ArrayList<Donnee>());
+
+        if (this.vue instanceof CUI) {
+            Scanner sc;
+            String action;
+
+            do {
+                System.out.println("Entrez une action :");
+                sc = new Scanner(System.in);
+                action = sc.nextLine();
+
+                /*if(action.toLowerCase().equals("s")) avancer();
+                if(action.toLowerCase().equals("p")) reculer();*/
+
+                avancer();
+
+            } while (!action.toLowerCase().equals("q") && this.ligneCourante < this.lecteur.getTabLigneCode().length);
+        }
+
+        //avancer();
     }
 
     private static boolean demanderModeGraphique() {
@@ -58,13 +85,18 @@ public class Controleur {
     /**
      * Avance dans le fichier
      */
-    private void avancer() {
-        String ligne = this.lecteur.getTabLigneCode()[this.ligneCourante];
-
+    public void avancer() {
         this.ligneCourante++;
+
+        this.traducteur.traiterLigne(this.lecteur.getTabLigneCode()[this.ligneCourante], this.ligneCourante);
+
+        this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlEtatVariable().get(this.ligneCourante));
     }
 
-    private void reculer() {
+    public void reculer() {
+        this.ligneCourante--;
+
+        this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlEtatVariable().get(this.ligneCourante));
 
     }
 
