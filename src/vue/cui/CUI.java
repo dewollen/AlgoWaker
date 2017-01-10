@@ -16,13 +16,6 @@ import java.util.Scanner;
  */
 public class CUI implements IVue {
     /**
-     * ArrayList contenant les variables
-     *
-     * @see CUI#setAlTraceVariables(ArrayList)
-     */
-    private ArrayList<Donnee> alTraceVariables;
-
-    /**
      * Controleur qui fait la relation entre la vue et
      * le modèle du programme
      */
@@ -35,16 +28,6 @@ public class CUI implements IVue {
      */
     public CUI(Controleur controleur) {
         this.controleur = controleur;
-    }
-
-    /**
-     * Permet d'initialiser les variables
-     *
-     * @param alTraceVariables ArrayList contenant les variables
-     */
-    @Override
-    public void setAlTraceVariables(ArrayList<Donnee> alTraceVariables) {
-        this.alTraceVariables = alTraceVariables;
     }
 
     /**

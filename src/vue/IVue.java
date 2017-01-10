@@ -45,13 +45,6 @@ public interface IVue {
      */
     void afficher(String[] tabLigneCode, Integer nLigne, ArrayList<Donnee> alDonnees, ArrayList<String> alConsole);
 
-    /**
-     * Permet d'initialiser l'ArrayList des variables
-     *
-     * @param alTraceVariables ArrayList comportant les variables
-     */
-    void setAlTraceVariables(ArrayList<Donnee> alTraceVariables);
-
 
     String lire();
 }
