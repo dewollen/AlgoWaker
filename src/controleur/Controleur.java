@@ -58,7 +58,10 @@ public class Controleur {
                 sc = new Scanner(System.in);
                 switch(sc.nextLine().toLowerCase().trim()) {
                     case "q" : System.exit(0); break;
-                    case "b" : reculer();             break;
+                    case "b" :
+                        reculer(this.ligneCourante--);
+                        this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlVariable(), this.traducteur.getAlConsole());
+                        break;
                     default  : avancer();             break;
                 }
 
@@ -86,17 +89,15 @@ public class Controleur {
         this.ligneCourante++;
 
         this.traducteur.traiterLigne(this.lecteur.getTabLigneCode()[this.ligneCourante], this.ligneCourante);
-        //if(this.traducteur.getAlNbSi().size() > 0 && this.traducteur.getAlNbSi().get(0).equals("si"))
-        //    this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlEtatVariable().get(this.ligneCourante), this.traducteur.getAlConsole(), "\u001B[46m");
-        //else
-            this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlEtatVariable().get(this.ligneCourante), this.traducteur.getAlConsole());
+        this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlVariable(), this.traducteur.getAlConsole());
     }
 
-    public void reculer() {
-        this.ligneCourante--;
-
-        this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlEtatVariable().get(this.ligneCourante), this.traducteur.getAlConsole());
-
+    public void reculer(int ligneCourante) {
+        int ligne = 0;
+        while(ligne<=ligneCourante) {
+            this.traducteur.traiterLigne(this.lecteur.getTabLigneCode()[ligne], ligne);
+            ligne++;
+        }
     }
 
     public void afficherInfos() {

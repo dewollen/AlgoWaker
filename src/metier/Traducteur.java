@@ -2,6 +2,7 @@ package metier;
 
 import bsh.EvalError;
 import bsh.Interpreter;
+import org.w3c.dom.events.EventException;
 import util.donnee.*;
 import vue.IVue;
 
@@ -32,7 +33,7 @@ public class Traducteur {
 
     /**
      * Booleen permettant de savoir si le programme est à la création des constantes
-     * @see Traducteur#initAttribut(String, boolean, ArrayList)
+     * @see Traducteur#initAttribut(String, boolean)
      * @see Traducteur#traiterLigne(String, int)
      */
     private boolean creerCons;
@@ -58,11 +59,11 @@ public class Traducteur {
 
     /**
      * ArrayList répertoriant toutes les variables du programme
-     * @see Traducteur#initAttribut(String, boolean, ArrayList)
+     * @see Traducteur#initAttribut(String, boolean)
      * @see Traducteur#traiterLigne(String, int)
-     * @see Traducteur#getAlEtatVariable()
+     * @see Traducteur#getAlVariable()
      */
-    private ArrayList<ArrayList<Donnee>> alEtatVariable;
+    private ArrayList<Donnee> alVariable;
 
     /**
      * ArrayList répertoriant toutes ce qui sera afficher dans la console
@@ -78,10 +79,10 @@ public class Traducteur {
     private  boolean bOk;
 
     /**
-     * ArrayList qui permet de compter les "si"
+     * compteur qui permet de compter les "si"
      * @see Traducteur#traiterLigne(String, int)
      */
-    private ArrayList<String> alNbSi;
+    private int nbSi;
 
     /**
      * Constructeur de la classe Traducteur
@@ -96,10 +97,10 @@ public class Traducteur {
         this.debutAlgo = false;
 
         this.alConstante = new ArrayList<>();
-        this.alEtatVariable = new ArrayList<>();
+        this.alVariable = new ArrayList<>();
 
         this.alConsole = new ArrayList<>();
-        this.alNbSi = new ArrayList<>();
+        this.nbSi = 0;
 
         this.bOk = true;
     }
@@ -108,9 +109,8 @@ public class Traducteur {
      * Permet d'initialiser les attributs et de les mettre dans les ArrayList correspondante
      * @param ligne Ligne à interpreter
      * @param creerCons Permet de savoir l'attribut est une constante
-     * @param alVarTemp Permet de stocker les variables
      */
-    public void initAttribut(String ligne, boolean creerCons, ArrayList<Donnee> alVarTemp) {
+    public void initAttribut(String ligne, boolean creerCons) {
         if (!ligne.equals("")) {
             String[] tabLigne;
             String type;
@@ -119,6 +119,7 @@ public class Traducteur {
                 tabLigne = ligne.split("<-");
             else
                 tabLigne = ligne.split(":");
+
             tabLigne[0] = tabLigne[0].replaceAll("[\t ]", "");
             tabLigne[1] = tabLigne[1].replaceAll(" ", "");
             String[] tabNomAttribut = tabLigne[0].split(",");
@@ -128,11 +129,7 @@ public class Traducteur {
                 ajouterConstante(tabNomAttribut, type, tabLigne[1]);
             } else {
                 type = tabLigne[1];
-                ArrayList<Donnee> alVariable = ajouterVariable(tabNomAttribut, type);
-                for (int i = 0; i < alVariable.size(); i++) {
-                    alVarTemp.add(alVariable.get(i));
-                }
-                this.alEtatVariable.add(alVarTemp);
+                ajouterVariable(tabNomAttribut, type);
             }
         }
     }
@@ -144,33 +141,20 @@ public class Traducteur {
      */
     public void traiterLigne(String ligne, int numLigne) {
         ligne = ligne.replaceAll("◄—", "<-").toLowerCase();
-        ArrayList<Donnee> alVarTemp;
-        if (numLigne != 0) {
-            alVarTemp = (ArrayList<Donnee>) this.getAlEtatVariable().get(numLigne - 1).clone();
-        } else {
-            alVarTemp = new ArrayList<>();
-        }
+
         if (ligne.toLowerCase().contains("constante")) {
-            alEtatVariable.add(alVarTemp);
             this.creerCons = true;
         } else if (ligne.toLowerCase().contains("variable")) {
-            alEtatVariable.add(alVarTemp);
             this.creerCons = false;
             this.creerVar = true;
         } else if (ligne.toLowerCase().contains("debut")) {
-            alEtatVariable.add(alVarTemp);
             this.creerVar = false;
             this.debutAlgo = true;
         } else if (creerCons || creerVar) {
             if (!ligne.equals("")) {
-                if (creerCons) this.alEtatVariable.add(alVarTemp);
-                initAttribut(ligne, creerCons, alVarTemp);
-            } else {
-                this.alEtatVariable.add(alVarTemp);
+                initAttribut(ligne, creerCons);
             }
         } else if (debutAlgo) {
-
-            this.alEtatVariable.add(alVarTemp);
 
             if (bOk) {
 
@@ -180,11 +164,10 @@ public class Traducteur {
                     tabAffectation[0] = tabAffectation[0].replaceAll("[\t ]", "");
                     tabAffectation[1] = tabAffectation[1].replaceAll(" ", "");
                     try {
-                        ArrayList<Donnee> alVariable = alEtatVariable.get(numLigne);
                         interpreter.eval("" + tabAffectation[0] + " = " + tabAffectation[1]);
-                        for (int i = 0; i < alVariable.size(); i++) {
-                            if (alVariable.get(i).getNom().equals(tabAffectation[0])) {
-                                alVariable.get(i).setValeur("" + interpreter.get(tabAffectation[0]));
+                        for (int i = 0; i < this.alVariable.size(); i++) {
+                            if (this.alVariable.get(i).getNom().equals(tabAffectation[0])) {
+                                this.alVariable.get(i).setValeur("" + interpreter.get(tabAffectation[0]));
                             }
                         }
                     } catch (EvalError evalError) {
@@ -219,20 +202,19 @@ public class Traducteur {
                     this.alConsole.add(valeur);
                     String variable = ligne.substring(ligne.indexOf("(") + 1, ligne.indexOf(")")).replaceAll(" ","");
                     try {
-                        ArrayList<Donnee> alVariable = alEtatVariable.get(numLigne);
                         for (int i = 0; i < alVariable.size(); i++) {
-                            if (alVariable.get(i).getNom().equals(variable))
-                                if(alVariable.get(i) instanceof Caractere) {
+                            if (this.alVariable.get(i).getNom().equals(variable))
+                                if(this.alVariable.get(i) instanceof Caractere) {
                                     interpreter.eval("" + variable + "='" + valeur + "'");
-                                    alVariable.get(i).setValeur("" + interpreter.get(variable));
+                                    this.alVariable.get(i).setValeur("" + interpreter.get(variable));
                                 }
-                                else if(alVariable.get(i) instanceof  Chaine) {
+                                else if(this.alVariable.get(i) instanceof  Chaine) {
                                     interpreter.eval("" + variable + "=\"" + valeur + "\"");
-                                    alVariable.get(i).setValeur("" + interpreter.get(variable));
+                                    this.alVariable.get(i).setValeur("" + interpreter.get(variable));
                                 }
                                 else {
                                     interpreter.eval("" + variable + "=" + valeur);
-                                    alVariable.get(i).setValeur("" + interpreter.get(variable));
+                                    this.alVariable.get(i).setValeur("" + interpreter.get(variable));
                                 }
                         }
                     } catch (EvalError evalError) {
@@ -242,23 +224,19 @@ public class Traducteur {
 
                 // SI/SINON !!!
                 if (ligne.contains("\tsi ")) {
-                    this.alNbSi.add("si");
+                    this.nbSi++;
                     String verif = ligne.substring(ligne.indexOf("si") + 2, ligne.indexOf("alors"));
 
                     verif = verif.replaceAll(" ", "").replaceAll("=", "==").replaceAll("et", "&&").replaceAll("ou", "||");
-                    try {
-                        if (!(Boolean) interpreter.eval(verif)) {
-                            bOk = false;
-                        }
-                    } catch (EvalError evalError) {
-                        evalError.printStackTrace();
+                    if (verifier(verif)/*!(Boolean) interpreter.eval(verif)*/) {
+                        bOk = false;
                     }
                 }
                 if(ligne.contains("sinon")) {
                     this.bOk = !bOk;
                 }
                 if(ligne.contains("fsi")) {
-                    this.alNbSi.remove(0);
+                    this.nbSi--;
                 }
 
 
@@ -266,23 +244,18 @@ public class Traducteur {
             }
             else {
                 if(ligne.contains("\tsi ")) {
-                    this.alNbSi.add("si");
+                    this.nbSi++;
                 }
-                if((ligne.contains("\tfsi") || ligne.contains("\tsinon")) && this.alNbSi.size()==1){
+                if((ligne.contains("\tfsi") || ligne.contains("\tsinon")) && this.nbSi==1){
 
                     this.bOk = true;
                 }
                 if(ligne.contains("\tfsi")) {
-                    this.alNbSi.remove(0);
+                    this.nbSi--;
                 }
-
-                this.alEtatVariable.add(alVarTemp);
             }
 
-        } else {
-            alEtatVariable.add(alVarTemp);
         }
-
     }
 
     /**
@@ -365,16 +338,17 @@ public class Traducteur {
      * @param type Type de la variable à créer
      * @return L'ArrayList des variables créées
      */
-    public ArrayList<Donnee> ajouterVariable(String[] tab, String type) {
-        ArrayList<Donnee> alVariable = new ArrayList<Donnee>();
+    public void ajouterVariable(String[] tab, String type) {
         type = type.toLowerCase();
         String s = "";
         boolean suivi = false;
         for (int i = 0; i < tab.length; i++) {
+
+
             System.out.println("Voulez-vous suivre la trace de la variable : " + tab[i] + " (o/n)");
             int cpt = 0;
             do {
-                if (cpt == 3) System.out.println("Veuillez entrer o ou n");
+                if (cpt % 3 == 0 && cpt != 0) System.out.println("Veuillez entrer o ou n");
                 Scanner sc = new Scanner(System.in);
                 s = sc.next().toLowerCase();
                 if (s.equals("o")) {
@@ -389,27 +363,27 @@ public class Traducteur {
             String typeTemp = "";
             switch (type) {
                 case "booleen":
-                    alVariable.add(new Booleen(tab[i], suivi, false));
+                    this.alVariable.add(new Booleen(tab[i], suivi, false));
                     typeTemp = "boolean ";
                     break;
 
                 case "caractere":
-                    alVariable.add(new Caractere(tab[i], suivi, false));
+                    this.alVariable.add(new Caractere(tab[i], suivi, false));
                     typeTemp = "char ";
                     break;
 
                 case "chaine de caractere":
-                    alVariable.add(new Chaine(tab[i], suivi, false));
+                    this.alVariable.add(new Chaine(tab[i], suivi, false));
                     typeTemp = "String ";
                     break;
 
                 case "entier":
-                    alVariable.add(new Entier(tab[i], suivi, false));
+                    this.alVariable.add(new Entier(tab[i], suivi, false));
                     typeTemp = "int ";
                     break;
 
                 case "reel":
-                    alVariable.add(new Reel(tab[i], suivi, false));
+                    this.alVariable.add(new Reel(tab[i], suivi, false));
                     typeTemp = "double ";
                     break;
 
@@ -426,16 +400,23 @@ public class Traducteur {
                 }
             }
         }
+    }
 
-        return alVariable;
+    public boolean verifier(String expression) {
+        try {
+            return (boolean)this.interpreter.eval(expression);
+        } catch (EvalError evalError){
+            evalError.printStackTrace();
+        }
+        return false;
     }
 
     /**
      * Retourne l'ArrayList des variables du programme
      * @return L'ArrayList des variables
      */
-    public ArrayList<ArrayList<Donnee>> getAlEtatVariable() {
-        return alEtatVariable;
+    public ArrayList<Donnee> getAlVariable() {
+        return alVariable;
     }
 
     /**

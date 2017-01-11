@@ -10,7 +10,7 @@ DEBUT
     x ◄— 5
     y ◄— 7
 
-	ecrire ( "etape 0" )
+	ecrire ( "etape 0 : " & x & " salut les martiens !! " & y )
 
     // On attend à l'utilisateur qu'il donne une valeur à la variable x
 	ecrire ( "Veuillez entrer une valeur pour x : " )
@@ -32,15 +32,16 @@ DEBUT
 			ecrire ("etape 5") 
 		fsi 
  
-	fsi 
- 
-	si y = 7 alors
-		ecrire ("etape 6") 
-	sinon 
-		ecrire ("etape 7") 
-	fsi 
+	fsi
+    ecrire ( "test" )
+	tantque x > 2 faire
+	    ecrire( "tantque" );
+	    x ◄— x-1
+	ftq
 
 
 	ecrire ( "etape 8" ) 
  
 FIN
+
+
