@@ -61,6 +61,11 @@ public class CUI implements IVue {
      */
     @Override
     public void afficher(String[] tabLigneCode, Integer nLigne, ArrayList<Donnee> alDonnees, ArrayList<String> alConsole) {
+        this.afficher(tabLigneCode, nLigne, alDonnees, alConsole, "\u001B[45m");
+    }
+
+    @Override
+    public void afficher(String[] tabLigneCode, Integer nLigne, ArrayList<Donnee> alDonnees, ArrayList<String> alConsole, String couleur) {
         String tremas1 = new String(new char[10]).replace("\0", "¨");
         String tremas2 = new String(new char[87]).replace("\0", "¨");
         String tremas3 = new String(new char[48]).replace("\0", "¨");
@@ -68,7 +73,7 @@ public class CUI implements IVue {
         sRet += String.format("|  CODE  |%78s| DONNEES |\n", " ");
         sRet += tremas2 + " " + tremas3 + "\n";
 
-        ArrayList<String> alStringCode    = this.formaterCode(tabLigneCode, nLigne);
+        ArrayList<String> alStringCode    = this.formaterCode(tabLigneCode, nLigne, couleur);
         ArrayList<String> alStringDonnees = this.formaterDonnees(alDonnees);
 
 
@@ -101,7 +106,7 @@ public class CUI implements IVue {
      * @param tabLigneCode tableau contenant toutes les lignes du pseudo-code
      * @param nLigne   Numéro de la ligne actuel
      */
-    private ArrayList<String> formaterCode(String[] tabLigneCode, Integer nLigne) {
+    private ArrayList<String> formaterCode(String[] tabLigneCode, Integer nLigne, String couleur) {
         ArrayList<String> alString = new ArrayList<String>();
 
         String sTemp;
@@ -112,7 +117,7 @@ public class CUI implements IVue {
             sTemp = sTemp.replaceAll("\t", "   ");
             sTemp = sTemp.replaceAll("◄—", "<-");
 
-            alString.add(String.format("| %2d %-80s | ", i, colorerCode(i, nLigne, sTemp)));
+            alString.add(String.format("| %2d %-80s | ", i, colorerCode(i, nLigne, sTemp, couleur)));
         }
 
         return alString;
@@ -126,20 +131,21 @@ public class CUI implements IVue {
      * @param ligne       Ligne actuel
      * @return La ligne colorée
      */
-    private String colorerCode(int numeroLigne, Integer nLigne, String ligne) {
+    private String colorerCode(int numeroLigne, Integer nLigne, String ligne, String couleur) {
         String sRet = String.format("%-80s", ligne);
 
         for(String motCle : IVue.motsCles) {
             if (nLigne != null && nLigne.equals(numeroLigne)) {
-                sRet = "\u001B[45m\u001B[37m\u001B[1m" + String.format("%-80s", sRet) + "\u001B[0m";
-                sRet = sRet.replaceAll("[\\W]" + motCle + "[\\W]", "\u001B[45m\u001B[1m\u001B[34m " + motCle + " \u001B[0m\u001B[37m\u001B[1m\u001B[45m");
+                sRet = couleur + "\u001B[37m\u001B[1m" + String.format("%-80s", sRet) + "\u001B[0m";
+                sRet = sRet.replaceAll("[\\W]" + motCle + "[\\W]", couleur + "\u001B[1m\u001B[34m " + motCle + " \u001B[0m\u001B[37m\u001B[1m" + couleur);
             }
             else {
                 sRet = String.format("%-80s", sRet);
                 sRet = sRet.replaceAll("[\\W]" + motCle + "[\\W]", "\u001B[34m " + motCle + " \u001B[0m");
             }
-
         }
+
+        sRet = sRet.replaceAll("//*", "\u001B[32m//") + "\u001B[0m";
 
         return sRet;
     }

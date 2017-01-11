@@ -35,6 +35,7 @@ public interface IVue {
      * @param nLigne       Numéro de la ligne actuel du pseudo-code
      */
     void afficher(String[] tabLigneCode, Integer nLigne, ArrayList<Donnee> alDonnees, ArrayList<String> alConsole);
+    void afficher(String[] tabLigneCode, Integer nLigne, ArrayList<Donnee> alDonnees, ArrayList<String> alConsole, String couleur);
 
 
     String lire();

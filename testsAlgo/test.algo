@@ -12,14 +12,15 @@ DEBUT
 
 	ecrire ( "etape 0" )
 
+    // On attend à l'utilisateur qu'il donne une valeur à la variable x
 	ecrire ( "Veuillez entrer une valeur pour x : " )
 	lire ( x )
- 
+
 	si x = 5 alors
  
 		ecrire ( "etape 1" )
  
-		si y > 2 alors
+		si y > 2 alors // Condition imbriquée
 			ecrire ( "etape 2" ) 
 		fsi 
 

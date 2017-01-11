@@ -87,6 +87,11 @@ public class GUI extends JFrame implements IVue {
 
     @Override
     public void afficher(String[] tabLigneCode, Integer coucou, ArrayList<Donnee> listeEtats, ArrayList<String> alConsole) {
+        this.afficher(tabLigneCode, coucou, listeEtats, alConsole, "");
+    }
+
+    @Override
+    public void afficher(String[] tabLigneCode, Integer coucou, ArrayList<Donnee> listeEtats, ArrayList<String> alConsole, String couleur) {
         this.pAlgo.majIHM(tabLigneCode);
         this.pTrace.majIHM(listeEtats);
         this.pConsole.majIHM(alConsole);
