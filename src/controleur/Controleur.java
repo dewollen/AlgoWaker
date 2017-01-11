@@ -53,19 +53,16 @@ public class Controleur {
 
         if (this.vue instanceof CUI) {
             Scanner sc;
-            String action;
-
             do {
-                System.out.println("Entrez une action :");
+                System.out.println("\u001B[33m[↲] Suivant - [Ln + ↲] Aller à la ligne n - [B + ↲] Précédent - [S + ↲] Tout exécuter - [Q  + ↲] Quitter\u001B[0m");
                 sc = new Scanner(System.in);
-                action = sc.nextLine();
+                switch(sc.nextLine().toLowerCase().trim()) {
+                    case "q" : System.exit(0); break;
+                    case "b" : reculer();             break;
+                    default  : avancer();             break;
+                }
 
-                /*if(action.toLowerCase().equals("s")) avancer();
-                if(action.toLowerCase().equals("p")) reculer();*/
-
-                avancer();
-
-            } while (!action.toLowerCase().equals("q") && this.ligneCourante < this.lecteur.getTabLigneCode().length -1);
+            } while (this.ligneCourante < this.lecteur.getTabLigneCode().length -1);
         }
 
         //avancer();
@@ -89,8 +86,6 @@ public class Controleur {
         this.ligneCourante++;
 
         this.traducteur.traiterLigne(this.lecteur.getTabLigneCode()[this.ligneCourante], this.ligneCourante);
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
         this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlEtatVariable().get(this.ligneCourante), this.traducteur.getAlConsole());
     }
 
