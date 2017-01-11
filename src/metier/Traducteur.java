@@ -28,6 +28,9 @@ public class Traducteur {
 
     private ArrayList<String> alConsole;
 
+    private  boolean bOk;
+    private ArrayList<String> alNbSi;
+
     public Traducteur(IVue vue) {
         this.vue = vue;
         this.interpreter = new Interpreter();
@@ -40,6 +43,9 @@ public class Traducteur {
         this.alEtatVariable = new ArrayList<>();
 
         this.alConsole = new ArrayList<>();
+        this.alNbSi = new ArrayList<>();
+
+        this.bOk = true;
     }
 
     public void initAttribut(String ligne, boolean creerCons, ArrayList<Donnee> alVarTemp) {
@@ -70,7 +76,7 @@ public class Traducteur {
     }
 
     public void traiterLigne(String ligne, int numLigne) {
-        ligne = ligne.replaceAll("◄—", "<-");
+        ligne = ligne.replaceAll("◄—", "<-").toLowerCase();
         ArrayList<Donnee> alVarTemp;
         if (numLigne != 0) {
             alVarTemp = (ArrayList<Donnee>) this.getAlEtatVariable().get(numLigne - 1).clone();
@@ -99,82 +105,117 @@ public class Traducteur {
 
             this.alEtatVariable.add(alVarTemp);
 
-            // Affectation !!!
-            if (ligne.contains("<-")) {
-                System.out.println("ZBEEEEEEEUB");
-                String[] tabAffectation = ligne.split("<-");
-                tabAffectation[0] = tabAffectation[0].replaceAll("[\t ]", "");
-                tabAffectation[1] = tabAffectation[1].replaceAll(" ", "");
-                try {
-                    ArrayList<Donnee> alVariable = alEtatVariable.get(numLigne);
-                    interpreter.eval("" + tabAffectation[0] + " = " + tabAffectation[1]);
-                    System.out.println(interpreter.get(tabAffectation[0]));
-                    for (int i = 0; i < alVariable.size(); i++) {
-                        if (alVariable.get(i).getNom().equals(tabAffectation[0])) {
-                            alVariable.get(i).setValeur("" + interpreter.get(tabAffectation[0]));
+            if (bOk) {
+
+                // Affectation !!!
+                if (ligne.contains("<-")) {
+                    String[] tabAffectation = ligne.split("<-");
+                    tabAffectation[0] = tabAffectation[0].replaceAll("[\t ]", "");
+                    tabAffectation[1] = tabAffectation[1].replaceAll(" ", "");
+                    try {
+                        ArrayList<Donnee> alVariable = alEtatVariable.get(numLigne);
+                        interpreter.eval("" + tabAffectation[0] + " = " + tabAffectation[1]);
+                        for (int i = 0; i < alVariable.size(); i++) {
+                            if (alVariable.get(i).getNom().equals(tabAffectation[0])) {
+                                alVariable.get(i).setValeur("" + interpreter.get(tabAffectation[0]));
+                            }
                         }
+                    } catch (EvalError evalError) {
+                        evalError.printStackTrace();
                     }
-                } catch (EvalError evalError) {
-                    evalError.printStackTrace();
                 }
-            }
 
-            // ECRIRE !!!
-            if (ligne.contains("\tecrire ")) {
-                String[] tabEcrire = ligne.split("[()]");
-                tabEcrire[1] = tabEcrire[1].replaceAll(" ", "");
-                String[] tabSOP = tabEcrire[1].split("&");
+                // ECRIRE !!!
+                if (ligne.contains("\tecrire ")) {
+                    String[] tabEcrire = ligne.split("[()]");
+                    String[] tabSOP = tabEcrire[1].split("&");
 
-                try {
-                    String sTemp = "";
-                    for (int i = 0; i < tabSOP.length; i++) {
-                        if (tabSOP[i].contains("\"")) {
-                            sTemp += tabSOP[i].replaceAll("\"", "");
-                        } else {
-                            sTemp += interpreter.get(tabSOP[i]);
+                    try {
+                        String sTemp = "";
+                        for (int i = 0; i < tabSOP.length; i++) {
+                            if (tabSOP[i].contains("\"")) {
+                                sTemp += tabSOP[i].replaceAll("\"", "");
+                            } else {
+                                tabSOP[i] = tabSOP[i].replaceAll(" ", "");
+                                sTemp += interpreter.get(tabSOP[i]);
+                            }
                         }
+                        alConsole.add(sTemp);
+                    } catch (EvalError evalError) {
+                        evalError.printStackTrace();
                     }
-                    alConsole.add(sTemp);
-                } catch (EvalError evalError) {
-                    evalError.printStackTrace();
                 }
+
+                // LIRE !!!
+                if (ligne.contains("lire")) {
+                    String valeur = vue.lire();
+                    this.alConsole.add(valeur);
+                    String variable = ligne.substring(ligne.indexOf("(") + 1, ligne.indexOf(")")).replaceAll(" ","");
+                    try {
+                        ArrayList<Donnee> alVariable = alEtatVariable.get(numLigne);
+                        for (int i = 0; i < alVariable.size(); i++) {
+                            if (alVariable.get(i).getNom().equals(variable))
+                                if(alVariable.get(i) instanceof Caractere) {
+                                    interpreter.eval("" + variable + "='" + valeur + "'");
+                                    alVariable.get(i).setValeur("" + interpreter.get(variable));
+                                }
+                                else if(alVariable.get(i) instanceof  Chaine) {
+                                    interpreter.eval("" + variable + "=\"" + valeur + "\"");
+                                    alVariable.get(i).setValeur("" + interpreter.get(variable));
+                                }
+                                else {
+                                    interpreter.eval("" + variable + "=" + valeur);
+                                    alVariable.get(i).setValeur("" + interpreter.get(variable));
+                                }
+                        }
+                    } catch (EvalError evalError) {
+                        evalError.printStackTrace();
+                    }
+                }
+
+                // SI/SINON !!!
+                if (ligne.contains("\tsi ")) {
+                    this.alNbSi.add("si");
+                    String verif = ligne.substring(ligne.indexOf("si") + 2, ligne.indexOf("alors"));
+
+                    verif = verif.replaceAll(" ", "").replaceAll("=", "==").replaceAll("et", "&&").replaceAll("ou", "||");
+                    try {
+                        if (!(Boolean) interpreter.eval(verif)) {
+                            bOk = false;
+                        }
+                    } catch (EvalError evalError) {
+                        evalError.printStackTrace();
+                    }
+                }
+                if(ligne.contains("sinon")) {
+                    this.bOk = !bOk;
+                }
+                if(ligne.contains("fsi")) {
+                    this.alNbSi.remove(0);
+                }
+
+
+                // TANTQUE !!!
+            }
+            else {
+                if(ligne.contains("\tsi ")) {
+                    this.alNbSi.add("si");
+                }
+                if((ligne.contains("\tfsi") || ligne.contains("\tsinon")) && this.alNbSi.size()==1){
+
+                    this.bOk = true;
+                }
+                if(ligne.contains("\tfsi")) {
+                    this.alNbSi.remove(0);
+                }
+
+                this.alEtatVariable.add(alVarTemp);
             }
 
-            // LIRE !!!
-            if (ligne.contains("\tlire ")) {
-                String valeur = vue.lire();
-                String variable = ligne.substring(ligne.indexOf("(") + 1, ligne.indexOf(")"));
-                try {
-                    ArrayList<Donnee> alVariable = alEtatVariable.get(numLigne);
-                    interpreter.eval("" + variable + "=" + valeur);
-                    for (int i = 0; i < alVariable.size(); i++) {
-                        System.out.println(alVariable.size() + "" + i);
-                        if (alVariable.get(i).getNom().equals(variable))
-                            alVariable.get(i).setValeur("" + interpreter.get(variable));
-                            alVariable.get(i).getValeur();
-                    }
-                } catch (EvalError evalError) {
-                    evalError.printStackTrace();
-                }
-            }
         } else {
             alEtatVariable.add(alVarTemp);
         }
 
-        // SI/SINON !!!
-        /*if(ligne.contains("\tsi ")){
-            String verif = ligne.substring(ligne.indexOf("si")+1,ligne.indexOf("alors"));
-
-            verif = verif.replaceAll(" ","").replaceAll("=","==");
-            if(!(interpreter.eval(verif)))
-            {
-                if(!ligne.contains("\tsinon "))
-                {
-                    System.out.println("condition non verifier !");
-                }
-            }
-
-        }*/
     }
 
     private String rechercheType(String s) {

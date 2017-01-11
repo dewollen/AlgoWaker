@@ -11,19 +11,21 @@ DEBUT
     y ◄— 7
 
 	ecrire ( "etape 0" )
+
+	ecrire ( "Veuillez entrer une valeur pour x : " )
+	lire ( x )
  
-	si x = 5 alors 
+	si x = 5 alors
  
 		ecrire ( "etape 1" )
-		lire ( x )
  
-		si y = 2 alors 
+		si y > 2 alors
 			ecrire ( "etape 2" ) 
 		fsi 
 
 		ecrire ( "etape 3" ) 
  
-		si y = 2 alors 
+		si y < 2 alors
 			ecrire ("etape 4") 
 		sinon 
 			ecrire ("etape 5") 
@@ -31,7 +33,7 @@ DEBUT
  
 	fsi 
  
-	si y = 7 alors 
+	si y = 7 alors
 		ecrire ("etape 6") 
 	sinon 
 		ecrire ("etape 7") 
