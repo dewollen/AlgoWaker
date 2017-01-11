@@ -86,9 +86,9 @@ public class Controleur {
         this.ligneCourante++;
 
         this.traducteur.traiterLigne(this.lecteur.getTabLigneCode()[this.ligneCourante], this.ligneCourante);
-        if(this.traducteur.getAlNbSi().size() > 0 && this.traducteur.getAlNbSi().get(0).equals("si"))
-            this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlEtatVariable().get(this.ligneCourante), this.traducteur.getAlConsole(), "\u001B[46m");
-        else
+        //if(this.traducteur.getAlNbSi().size() > 0 && this.traducteur.getAlNbSi().get(0).equals("si"))
+        //    this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlEtatVariable().get(this.ligneCourante), this.traducteur.getAlConsole(), "\u001B[46m");
+        //else
             this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlEtatVariable().get(this.ligneCourante), this.traducteur.getAlConsole());
     }
 
