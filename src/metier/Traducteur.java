@@ -15,22 +15,78 @@ import java.util.Scanner;
  * @version 2017-01-05
  */
 public class Traducteur {
+
+    /**
+     * Variables de la classe Interpreter de la librairie bsh
+     * @see Traducteur#traiterLigne(String, int)
+     * @see Traducteur#ajouterConstante(String[], String, String)
+     * @see Traducteur#ajouterVariable(String[], String)
+     */
     private Interpreter interpreter;
 
+    /**
+     * Variables permettant de savoir si l'utilisateur utilise la méthode d'affichage CUI ou GUI
+     * @see Traducteur#traiterLigne(String, int)
+     */
     private IVue vue;
 
+    /**
+     * Booleen permettant de savoir si le programme est à la création des constantes
+     * @see Traducteur#initAttribut(String, boolean, ArrayList)
+     * @see Traducteur#traiterLigne(String, int)
+     */
     private boolean creerCons;
+
+    /**
+     * Booleen permettant de savoir si le programme est à la création des variables
+     * @see Traducteur#traiterLigne(String, int)
+     */
     private boolean creerVar;
+
+    /**
+     * Booleen permettant de savoir si le programme à commencer à interpreter le programme de pseudo-code
+     * @see Traducteur#traiterLigne(String, int)
+     */
     private boolean debutAlgo;
 
+    /**
+     * ArrayList répertoriant toutes les constantes du programme
+     * @see Traducteur#ajouterConstante(String[], String, String)
+     * @see Traducteur#getAlConstante()
+     */
     private ArrayList<Donnee> alConstante;
+
+    /**
+     * ArrayList répertoriant toutes les variables du programme
+     * @see Traducteur#initAttribut(String, boolean, ArrayList)
+     * @see Traducteur#traiterLigne(String, int)
+     * @see Traducteur#getAlEtatVariable()
+     */
     private ArrayList<ArrayList<Donnee>> alEtatVariable;
 
+    /**
+     * ArrayList répertoriant toutes ce qui sera afficher dans la console
+     * @see Traducteur#traiterLigne(String, int)
+     * @see Traducteur#getAlConsole()
+     */
     private ArrayList<String> alConsole;
 
+    /**
+     * Permet de savoir si les conditions des "si" et "tant que" sont vrai ou pas
+     * @see Traducteur#traiterLigne(String, int)
+     */
     private  boolean bOk;
+
+    /**
+     * ArrayList qui permet de compter les "si"
+     * @see Traducteur#traiterLigne(String, int)
+     */
     private ArrayList<String> alNbSi;
 
+    /**
+     * Constructeur de la classe Traducteur
+     * @param vue Permet de savoir si l'interface utilisé est en CUI ou en GUI
+     */
     public Traducteur(IVue vue) {
         this.vue = vue;
         this.interpreter = new Interpreter();
@@ -48,6 +104,12 @@ public class Traducteur {
         this.bOk = true;
     }
 
+    /**
+     * Permet d'initialiser les attributs et de les mettre dans les ArrayList correspondante
+     * @param ligne Ligne à interpreter
+     * @param creerCons Permet de savoir l'attribut est une constante
+     * @param alVarTemp Permet de stocker les variables
+     */
     public void initAttribut(String ligne, boolean creerCons, ArrayList<Donnee> alVarTemp) {
         if (!ligne.equals("")) {
             String[] tabLigne;
@@ -75,6 +137,11 @@ public class Traducteur {
         }
     }
 
+    /**
+     * Permet d'interpreter chaque ligne avec l'affectation, lire , écrire, si , tant que
+     * @param ligne Ligne à interpreter
+     * @param numLigne Numéro de la ligne à interpreter
+     */
     public void traiterLigne(String ligne, int numLigne) {
         ligne = ligne.replaceAll("◄—", "<-").toLowerCase();
         ArrayList<Donnee> alVarTemp;
@@ -218,6 +285,11 @@ public class Traducteur {
 
     }
 
+    /**
+     * Permet de rechercher le type de la constante
+     * @param s La ligne à interpreter
+     * @return Le type de la constante
+     */
     private String rechercheType(String s) {
         if (s.contains("\"")) {
             return "Chaine de caractere";
@@ -235,6 +307,12 @@ public class Traducteur {
         }
     }
 
+    /**
+     * Permet de créer une constante et de l'ajouter à l'ArrayList alConstante
+     * @param tab La/les constante(s) à créer
+     * @param type le type de la constante à créer
+     * @param valeur La valeur de la constante à créer
+     */
     private void ajouterConstante(String[] tab, String type, String valeur) {
         type = type.toLowerCase();
         String typeTemp = "";
@@ -281,6 +359,12 @@ public class Traducteur {
         }
     }
 
+    /**
+     * Permet de créer une variables et de l'ajouter à l'ArrayList alEtatVariable
+     * @param tab La/les variables à créer
+     * @param type Type de la variable à créer
+     * @return L'ArrayList des variables créées
+     */
     public ArrayList<Donnee> ajouterVariable(String[] tab, String type) {
         ArrayList<Donnee> alVariable = new ArrayList<Donnee>();
         type = type.toLowerCase();
@@ -346,14 +430,26 @@ public class Traducteur {
         return alVariable;
     }
 
+    /**
+     * Retourne l'ArrayList des variables du programme
+     * @return L'ArrayList des variables
+     */
     public ArrayList<ArrayList<Donnee>> getAlEtatVariable() {
         return alEtatVariable;
     }
 
+    /**
+     * Retourne l'ArrayList des constantes du programme
+     * @return L'ArrayList des constantes
+     */
     public ArrayList<Donnee> getAlConstante() {
         return alConstante;
     }
 
+    /**
+     * Retourne l'affichage de la console de l'interpreteur
+     * @return L'ArrayList des String à afficher dans la console de l'interpreteur
+     */
     public ArrayList<String> getAlConsole() {
         return alConsole;
     }
