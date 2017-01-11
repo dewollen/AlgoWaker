@@ -65,7 +65,7 @@ public class Controleur {
 
                 avancer();
 
-            } while (!action.toLowerCase().equals("q") && this.ligneCourante < this.lecteur.getTabLigneCode().length);
+            } while (!action.toLowerCase().equals("q") && this.ligneCourante < this.lecteur.getTabLigneCode().length -1);
         }
 
         //avancer();
@@ -89,7 +89,8 @@ public class Controleur {
         this.ligneCourante++;
 
         this.traducteur.traiterLigne(this.lecteur.getTabLigneCode()[this.ligneCourante], this.ligneCourante);
-
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
         this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlEtatVariable().get(this.ligneCourante), this.traducteur.getAlConsole());
     }
 

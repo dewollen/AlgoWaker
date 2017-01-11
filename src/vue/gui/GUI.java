@@ -258,7 +258,7 @@ public class GUI extends JFrame implements IVue {
             void creerListeMotsCles() {
                 String sTemp = "(";
                 for (int i = 0; i < IVue.motsCles.length; i++)
-                    sTemp += IVue.motsCles[i][0] + "|";
+                    sTemp += IVue.motsCles[i] + "|";
 
                 regexMotsCles = sTemp + ")";
             }

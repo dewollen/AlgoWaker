@@ -7,6 +7,8 @@ import vue.IVue;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Classe qui gère l'affichage en mode console (Console User Interface)
@@ -103,7 +105,9 @@ public class CUI implements IVue {
         ArrayList<String> alString = new ArrayList<String>();
 
         String sTemp;
-        for (int i = 0; i < tabLigneCode.length; i++) {
+        int debut = (nLigne >= 19 ? nLigne - 19 : 0);
+            debut = (debut + 40 > tabLigneCode.length ? tabLigneCode.length - 40 : debut);
+        for(int i = debut; i < 40 + debut && i < tabLigneCode.length; i++) {
             sTemp = tabLigneCode[i];
             sTemp = sTemp.replaceAll("\t", "   ");
             sTemp = sTemp.replaceAll("◄—", "<-");
@@ -123,24 +127,18 @@ public class CUI implements IVue {
      * @return La ligne colorée
      */
     private String colorerCode(int numeroLigne, Integer nLigne, String ligne) {
-        String sRet;
+        String sRet = String.format("%-80s", ligne);
 
-        if (ligne.equals(""))
-            sRet = " ";
-        else
-            sRet = ligne;
+        for(String motCle : IVue.motsCles) {
+            if (nLigne != null && nLigne.equals(numeroLigne)) {
+                sRet = "\u001B[45m\u001B[37m\u001B[1m" + String.format("%-80s", sRet) + "\u001B[0m";
+                sRet = sRet.replaceAll("[\\W]" + motCle + "[\\W]", "\u001B[45m\u001B[1m\u001B[34m " + motCle + " \u001B[0m\u001B[37m\u001B[1m\u001B[45m");
+            }
+            else {
+                sRet = String.format("%-80s", sRet);
+                sRet = sRet.replaceAll("[\\W]" + motCle + "[\\W]", "\u001B[34m " + motCle + " \u001B[0m");
+            }
 
-        if (nLigne != null && nLigne.equals(numeroLigne))
-            sRet = "\u001B[45m" + String.format("%-80s", sRet) + "\u001B[0m";
-        else
-            sRet = String.format("%-80s", sRet);
-
-
-        for (String[] motCle : IVue.motsCles) {
-            if (nLigne != null && nLigne.equals(numeroLigne))
-                sRet = sRet.replace(motCle[0], "\u001B[45m" + motCle[1] + motCle[0] + "\u001B[0m\u001B[45m");
-            else
-                sRet = sRet.replace(motCle[0], motCle[1] + motCle[0] + "\u001B[0m");
         }
 
         return sRet;
