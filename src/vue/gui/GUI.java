@@ -81,6 +81,11 @@ public class GUI extends JFrame implements IVue {
     }
 
     @Override
+    public Controleur getControleur() {
+        return controleur;
+    }
+
+    @Override
     public void afficherMessage(String message) {
         JOptionPane.showMessageDialog(this, message);
     }
@@ -247,6 +252,8 @@ public class GUI extends JFrame implements IVue {
         public Dimension getMinimumSize() {
             return new Dimension(GUI.WIDTH * 4 / 5, GUI.HEIGHT * 4 / 5);
         }
+
+
 
         public void majIHM(String[] tabLigneCode) {
         }

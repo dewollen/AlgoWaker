@@ -73,7 +73,7 @@ public class CUI implements IVue {
         sRet += String.format("|  CODE  |%78s| DONNEES |\n", " ");
         sRet += tremas2 + " " + tremas3 + "\n";
 
-        ArrayList<String> alStringCode    = this.formaterCode(tabLigneCode, nLigne, couleur);
+        ArrayList<String> alStringCode = this.formaterCode(tabLigneCode, nLigne, couleur);
         ArrayList<String> alStringDonnees = this.formaterDonnees(alDonnees);
 
 
@@ -104,15 +104,15 @@ public class CUI implements IVue {
      * Permet de formater le code afin de mieux l'interpreter
      *
      * @param tabLigneCode tableau contenant toutes les lignes du pseudo-code
-     * @param nLigne   Numéro de la ligne actuel
+     * @param nLigne       Numéro de la ligne actuel
      */
     private ArrayList<String> formaterCode(String[] tabLigneCode, Integer nLigne, String couleur) {
         ArrayList<String> alString = new ArrayList<String>();
 
         String sTemp;
         int debut = (nLigne >= 19 ? nLigne - 19 : 0);
-            debut = (debut + 40 > tabLigneCode.length ? tabLigneCode.length - 40 : debut);
-        for(int i = debut; i < 40 + debut && i < tabLigneCode.length; i++) {
+        debut = (debut + 40 > tabLigneCode.length ? tabLigneCode.length - 40 : debut);
+        for (int i = debut; i < 40 + debut && i < tabLigneCode.length; i++) {
             sTemp = tabLigneCode[i];
             sTemp = sTemp.replaceAll("\t", "   ");
             sTemp = sTemp.replaceAll("◄—", "<-");
@@ -134,12 +134,11 @@ public class CUI implements IVue {
     private String colorerCode(int numeroLigne, Integer nLigne, String ligne, String couleur) {
         String sRet = String.format("%-80s", ligne);
 
-        for(String motCle : IVue.motsCles) {
+        for (String motCle : IVue.motsCles) {
             if (nLigne != null && nLigne.equals(numeroLigne)) {
                 sRet = couleur + "\u001B[37m\u001B[1m" + String.format("%-80s", sRet) + "\u001B[0m";
                 sRet = sRet.replaceAll("[\\W]" + motCle + "[\\W]", couleur + "\u001B[1m\u001B[34m " + motCle + " \u001B[0m\u001B[37m\u001B[1m" + couleur);
-            }
-            else {
+            } else {
                 sRet = String.format("%-80s", sRet);
                 sRet = sRet.replaceAll("[\\W]" + motCle + "[\\W]", "\u001B[34m " + motCle + " \u001B[0m");
             }
@@ -172,8 +171,8 @@ public class CUI implements IVue {
 
     private String formaterConsole(ArrayList<String> alConsole) {
         String sRet = "";
-        for(int i = 4; i > 0; i--) {
-            if(alConsole.size() - i >= 0)
+        for (int i = 4; i > 0; i--) {
+            if (alConsole.size() - i >= 0)
                 sRet += String.format("| %-83s |\n", alConsole.get(alConsole.size() - i));
             else
                 sRet += String.format("| %-83s |\n", " ");
@@ -181,6 +180,11 @@ public class CUI implements IVue {
         }
 
         return sRet;
+    }
+
+    @Override
+    public Controleur getControleur() {
+        return controleur;
     }
 
     @Override

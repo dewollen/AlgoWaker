@@ -8,6 +8,7 @@ import vue.IVue;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Stack;
 
 /**
  * Classe qui interprète les portions de pseudo-code afin d'agir en conséquence
@@ -72,17 +73,8 @@ public class Traducteur {
      */
     private ArrayList<String> alConsole;
 
-    /**
-     * Permet de savoir si les conditions des "si" et "tant que" sont vrai ou pas
-     * @see Traducteur#traiterLigne(String, int)
-     */
-    private  boolean bOk;
-
-    /**
-     * compteur qui permet de compter les "si"
-     * @see Traducteur#traiterLigne(String, int)
-     */
-    private int nbSi;
+    Stack<Boolean> pile;
+    Stack<Integer> sLigTQ;
 
     /**
      * Constructeur de la classe Traducteur
@@ -100,9 +92,10 @@ public class Traducteur {
         this.alVariable = new ArrayList<>();
 
         this.alConsole = new ArrayList<>();
-        this.nbSi = 0;
 
-        this.bOk = true;
+        this.pile = new Stack<>();
+        this.pile.push(new Boolean(true));
+        this.sLigTQ = new Stack<>();
     }
 
     /**
@@ -155,8 +148,10 @@ public class Traducteur {
                 initAttribut(ligne, creerCons);
             }
         } else if (debutAlgo) {
+            System.out.println("pile.peek() : " + pile.peek());
 
-            if (bOk) {
+            if (pile.peek()) {
+                System.out.println("hein ? hein ? quoi tu dis quoi ?");
 
                 // Affectation !!!
                 if (ligne.contains("<-")) {
@@ -176,7 +171,7 @@ public class Traducteur {
                 }
 
                 // ECRIRE !!!
-                if (ligne.contains("\tecrire ")) {
+                if (ligne.replaceAll(" ","").replaceAll("\t","").toLowerCase().matches("^ecrire[(].+[)]\\\\*.*")) {
                     String[] tabEcrire = ligne.split("[()]");
                     String[] tabSOP = tabEcrire[1].split("&");
 
@@ -223,37 +218,79 @@ public class Traducteur {
                 }
 
                 // SI/SINON !!!
-                if (ligne.contains("\tsi ")) {
-                    this.nbSi++;
+                if (ligne.replaceAll(" ","").replaceAll("\t","").toLowerCase().matches("si.*alors")) {
                     String verif = ligne.substring(ligne.indexOf("si") + 2, ligne.indexOf("alors"));
 
                     verif = verif.replaceAll(" ", "").replaceAll("=", "==").replaceAll("et", "&&").replaceAll("ou", "||");
-                    if (verifier(verif)/*!(Boolean) interpreter.eval(verif)*/) {
-                        bOk = false;
+                    try {
+                        if (!(Boolean) interpreter.eval(verif)) {
+                            this.pile.push(new Boolean(false));
+                        }
+                        else {
+                            this.pile.add(new Boolean(true));
+                        }
+                    } catch (EvalError evalError) {
+                        evalError.printStackTrace();
                     }
                 }
-                if(ligne.contains("sinon")) {
-                    this.bOk = !bOk;
+                if(ligne.replaceAll(" ","").replaceAll("\t","").toLowerCase().matches("sinon")) {
+                    this.pile.push(new Boolean(!this.pile.pop()));
                 }
-                if(ligne.contains("fsi")) {
-                    this.nbSi--;
+                if(ligne.replaceAll(" ","").replaceAll("\t","").toLowerCase().matches("fsi")) {
+                   this.pile.pop();
                 }
+                System.out.println("SI TERMINE !!!");
 
-
+                System.out.println(ligne.replaceAll(" ","").replaceAll("\t",""));
                 // TANTQUE !!!
+                if(ligne.replaceAll(" ","").replaceAll("\t","").toLowerCase().matches("tantque.*faire")) {
+                    System.out.println("non mais ca vas-y");
+                    String verif = ligne.substring(ligne.indexOf("tantque") + 7, ligne.indexOf("faire")).replaceAll(" ", "");
+                    try {
+                        if (!(Boolean) interpreter.eval(verif)) {
+                            this.pile.push(new Boolean(false));
+                        }
+                        else{
+                            this.pile.push(new Boolean(true));
+                            this.sLigTQ.push(numLigne);
+
+                            System.out.println("entrer tantque");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(ligne.replaceAll(" ","").replaceAll("\t","").toLowerCase().matches("ftq")){
+                    this.pile.pop();
+                    this.vue.getControleur().setLigneCourante(this.sLigTQ.pop());
+                }
             }
             else {
-                if(ligne.contains("\tsi ")) {
-                    this.nbSi++;
+                if(ligne.replaceAll(" ","").replaceAll("\t","").toLowerCase().matches("si.*alors")) {
+                    this.pile.push(new Boolean(false));
                 }
-                if((ligne.contains("\tfsi") || ligne.contains("\tsinon")) && this.nbSi==1){
+                if(ligne.replaceAll(" ","").replaceAll("\t","").toLowerCase().matches("fsi")){
+                    this.pile.pop();
+                }
+                if(ligne.replaceAll(" ","").replaceAll("\t","").toLowerCase().matches("sinon") && this.pile.get(this.pile.size()-2)){
+                    this.pile.push(!this.pile.pop());
+                }
 
-                    this.bOk = true;
+                if(ligne.replaceAll(" ","").replaceAll("\t","").toLowerCase().matches("tantque.*faire")) {
+                    System.out.println("Je suis la !!!");
+                    this.pile.push(new Boolean(false));
                 }
-                if(ligne.contains("\tfsi")) {
-                    this.nbSi--;
+                if(ligne.replaceAll(" ","").replaceAll("\t","").toLowerCase().matches("ftq")) {
+                    this.pile.pop();
                 }
             }
+
+            System.out.println(pile.size());
+            if(this.pile.size()>1) {
+                System.out.println("PRECEDENT : " + pile.get(pile.size()-2));
+            }
+            System.out.println(("COURANT   : " + pile.peek()
+            ));
 
         }
     }
@@ -433,5 +470,43 @@ public class Traducteur {
      */
     public ArrayList<String> getAlConsole() {
         return alConsole;
+    }
+
+    public String evaluerExpression(String expression) {
+        String tabExpression[] = expression.split("[){1}]");
+        rechercherPrimitive(tabExpression[0]);
+        return "";
+    }
+
+    public String rechercherPrimitive(String expression) {
+        if(expression.contains("hasard")) {
+            return hasard(expression);
+        }
+        else if(expression.contains("cosinus")) {
+            //return cosinus(expression);
+        }
+        else if(expression.contains("sinus")) {
+            //return sinus(expression);
+        }
+        else if(expression.contains("arrondi")) {
+           // return arrondi(expression);
+        }
+        else if(expression.contains("plafond")) {
+
+        }
+        else if(3+3==0) {
+
+        }
+        else {
+            return expression;
+        }
+
+        return "";
+    }
+
+    public String hasard(String expression) {
+        String tabExpression[] = expression.split("[()]");
+
+        return "(int)Math.random() * " + tabExpression[1] + tabExpression[2];
     }
 }

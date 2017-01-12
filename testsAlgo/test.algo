@@ -3,45 +3,48 @@ constante:
     C ◄— "COOL"
     K ◄— 45
 variable:
-	x, y : entier
-	zbeub : reel
+    x, y : entier
+    zbeub : reel
 
-DEBUT 
+DEBUT
     x ◄— 5
-    y ◄— 7
+    y ◄— 2
 
-	ecrire ( "etape 0 : " & x & " salut les martiens !! " & y )
+    ecrire ( "etape 0 : " & x & " salut les martiens !! " & y )
 
-    // On attend à l'utilisateur qu'il donne une valeur à la variable x
-	ecrire ( "Veuillez entrer une valeur pour x : " )
-	lire ( x )
+    ecrire ( "Veuillez entrer une valeur pour x : " )
+    lire ( x )
 
-	si x = 5 alors
- 
-		ecrire ( "etape 1" )
- 
-		si y > 2 alors // Condition imbriquée
-			ecrire ( "etape 2" ) 
-		fsi 
+    si x < 4 alors
+        tantque x < 10 faire
+            x ◄— x + 1
+            ecrire ( "bonjour !" )
+        ftq
+    sinon
+        tantque y < 3 faire
+            y ◄— y + 1
+            ecrire ( "ok !" )
+        ftq
+    fsi
 
-		ecrire ( "etape 3" ) 
- 
-		si y < 2 alors
-			ecrire ("etape 4") 
-		sinon 
-			ecrire ("etape 5") 
-		fsi 
- 
-	fsi
-    ecrire ( "test" )
-	tantque x > 2 faire
-	    ecrire( "tantque" );
-	    x ◄— x-1
-	ftq
+    si x = 5 alors
 
+        ecrire ( "etape 1" )
 
-	ecrire ( "etape 8" ) 
- 
+        si y > 2 alors
+            ecrire ( "etape 2" )
+        fsi
+
+        ecrire ( "etape 3" )
+
+        si y < 2 alors
+            ecrire ("etape 4")
+        sinon
+            ecrire ("etape 5")
+        fsi
+    sinon
+        ecrire ( "coucou toi !" )
+    fsi
+
+    ecrire ( "etape 8" )
 FIN
-
-

@@ -1,5 +1,6 @@
 package vue;
 
+import controleur.Controleur;
 import util.donnee.Donnee;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public interface IVue {
     void afficher(String[] tabLigneCode, Integer nLigne, ArrayList<Donnee> alDonnees, ArrayList<String> alConsole);
     void afficher(String[] tabLigneCode, Integer nLigne, ArrayList<Donnee> alDonnees, ArrayList<String> alConsole, String couleur);
 
+    Controleur getControleur();
 
     String lire();
 }

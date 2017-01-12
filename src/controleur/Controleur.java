@@ -109,6 +109,11 @@ public class Controleur {
         }
     }
 
+    public void setLigneCourante(int nouvelleLigne) {
+        this.ligneCourante = nouvelleLigne;
+        this.traducteur.traiterLigne(this.lecteur.getTabLigneCode()[this.ligneCourante], this.ligneCourante);
+    }
+
     public void quitter() {
         System.exit(-1);
     }
