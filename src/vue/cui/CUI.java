@@ -1,12 +1,22 @@
 package vue.cui;
 
 import controleur.Controleur;
+import iut.algo.Console;
+import iut.algo.CouleurConsole;
+import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.AnsiConsole;
+import org.fusesource.jansi.AnsiRenderWriter;
 import util.donnee.Donnee;
 import vue.IVue;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Scanner;
+
+import static org.fusesource.jansi.Ansi.*;
+import static org.fusesource.jansi.Ansi.Color.*;
+import static org.fusesource.jansi.AnsiRenderer.render;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,19 +71,20 @@ public class CUI implements IVue {
      */
     @Override
     public void afficher(String[] tabLigneCode, Integer nLigne, ArrayList<Donnee> alDonnees, ArrayList<String> alConsole) {
-        this.afficher(tabLigneCode, nLigne, alDonnees, alConsole, "\u001B[45m");
+        this.afficher(tabLigneCode, nLigne, alDonnees, alConsole, "magenta");
     }
 
     @Override
-    public void afficher(String[] tabLigneCode, Integer nLigne, ArrayList<Donnee> alDonnees, ArrayList<String> alConsole, String couleur) {
+    public void afficher(String[] tabLigneCode, Integer nLigne, ArrayList<Donnee> alDonnees, ArrayList<String> alConsole, String couleurFond) {
+        Console.effacerEcran();
         String tremas1 = new String(new char[10]).replace("\0", "¨");
         String tremas2 = new String(new char[87]).replace("\0", "¨");
         String tremas3 = new String(new char[48]).replace("\0", "¨");
-        String sRet = String.format(tremas1 + "%78s" + tremas1 + "¨\n", " ");
-        sRet += String.format("|  CODE  |%78s| DONNEES |\n", " ");
-        sRet += tremas2 + " " + tremas3 + "\n";
+        Console.println(String.format(tremas1 + "%78s" + tremas1 + "¨", " "));
+        Console.println(String.format("|  CODE  |%78s| DONNEES |", " "));
+        Console.println(tremas2 + " " + tremas3);
 
-        ArrayList<String> alStringCode = this.formaterCode(tabLigneCode, nLigne, couleur);
+        ArrayList<String> alStringCode    = this.formaterCode(tabLigneCode, nLigne, couleurFond);
         ArrayList<String> alStringDonnees = this.formaterDonnees(alDonnees);
 
 
@@ -82,42 +93,45 @@ public class CUI implements IVue {
 
         while (itCode.hasNext() || itDonnees.hasNext()) {
             if (itCode.hasNext())
-                sRet += itCode.next();
+                Console.print(itCode.next());
             else
-                sRet += new String(new char[87]).replace("\0", " ");
+                Console.print(new String(new char[87]).replace("\0", " "));
 
             if (itDonnees.hasNext())
-                sRet += itDonnees.next() + "\n";
+                Console.println(" " + itDonnees.next());
             else
-                sRet += "\n";
+                Console.println();
         }
 
-        sRet += tremas2 + "\n\n";
-        sRet += tremas1 + "\n| CONSOLE |\n" + tremas2 + "\n";
-        sRet += this.formaterConsole(alConsole);
-        sRet += tremas2;
+        Console.println(tremas2 + "\n\n");
+        Console.println(tremas1 + "\n| CONSOLE |\n" + tremas2);
+        Console.println(this.formaterConsole(alConsole));
+        Console.println(tremas2);
+    }
 
-        System.out.println(sRet);
+    @Override
+    public Controleur getControleur() {
+        return this.controleur;
     }
 
     /**
      * Permet de formater le code afin de mieux l'interpreter
      *
      * @param tabLigneCode tableau contenant toutes les lignes du pseudo-code
-     * @param nLigne       Numéro de la ligne actuel
+     * @param nLigne   Numéro de la ligne actuel
      */
-    private ArrayList<String> formaterCode(String[] tabLigneCode, Integer nLigne, String couleur) {
+    private ArrayList<String> formaterCode(String[] tabLigneCode, Integer nLigne, String couleurFond) {
         ArrayList<String> alString = new ArrayList<String>();
 
         String sTemp;
         int debut = (nLigne >= 19 ? nLigne - 19 : 0);
-        debut = (debut + 40 > tabLigneCode.length ? tabLigneCode.length - 40 : debut);
-        for (int i = debut; i < 40 + debut && i < tabLigneCode.length; i++) {
+            debut = (debut + 40 > tabLigneCode.length ? tabLigneCode.length - 40 : debut);
+        for(int i = debut; i < 40 + debut && i < tabLigneCode.length; i++) {
             sTemp = tabLigneCode[i];
             sTemp = sTemp.replaceAll("\t", "   ");
             sTemp = sTemp.replaceAll("◄—", "<-");
 
-            alString.add(String.format("| %2d %-80s | ", i, colorerCode(i, nLigne, sTemp, couleur)));
+            alString.add(colorerCode(i, nLigne, sTemp, couleurFond));
         }
 
         return alString;
@@ -131,22 +145,26 @@ public class CUI implements IVue {
      * @param ligne       Ligne actuel
      * @return La ligne colorée
      */
-    private String colorerCode(int numeroLigne, Integer nLigne, String ligne, String couleur) {
+    private String colorerCode(int numeroLigne, Integer nLigne, String ligne, String couleurFond) {
         String sRet = String.format("%-80s", ligne);
 
-        for (String motCle : IVue.motsCles) {
+        if(nLigne != null && nLigne.equals(numeroLigne))
+            sRet = CouleurConsole.MAUVE.getFond() + sRet;
+
+
+        for(String motCle : IVue.motsCles) {
             if (nLigne != null && nLigne.equals(numeroLigne)) {
-                sRet = couleur + "\u001B[37m\u001B[1m" + String.format("%-80s", sRet) + "\u001B[0m";
-                sRet = sRet.replaceAll("[\\W]" + motCle + "[\\W]", couleur + "\u001B[1m\u001B[34m " + motCle + " \u001B[0m\u001B[37m\u001B[1m" + couleur);
-            } else {
-                sRet = String.format("%-80s", sRet);
-                sRet = sRet.replaceAll("[\\W]" + motCle + "[\\W]", "\u001B[34m " + motCle + " \u001B[0m");
+                sRet = sRet.replaceAll("[\\W]" + motCle + "[\\W]", " " + CouleurConsole.BLEU.getFont() + motCle + Console.getCodeNormal() + " " + CouleurConsole.MAUVE.getFond());
+            }
+            else {
+                sRet = sRet.replaceAll("[\\W]" + motCle + "[\\W]", " " + CouleurConsole.BLEU.getFont() + motCle + Console.getCodeNormal() + " ");
             }
         }
 
-        sRet = sRet.replaceAll("//*", "\u001B[32m//") + "\u001B[0m";
+        sRet = sRet.replaceAll("//*", CouleurConsole.JAUNE.getFont() +  "//");
 
-        return sRet;
+
+        return String.format("| %2d " + sRet + Console.getCodeNormal() + " |", numeroLigne);
     }
 
     /**
@@ -171,8 +189,8 @@ public class CUI implements IVue {
 
     private String formaterConsole(ArrayList<String> alConsole) {
         String sRet = "";
-        for (int i = 4; i > 0; i--) {
-            if (alConsole.size() - i >= 0)
+        for(int i = 4; i > 0; i--) {
+            if(alConsole.size() - i >= 0)
                 sRet += String.format("| %-83s |\n", alConsole.get(alConsole.size() - i));
             else
                 sRet += String.format("| %-83s |\n", " ");
@@ -180,11 +198,6 @@ public class CUI implements IVue {
         }
 
         return sRet;
-    }
-
-    @Override
-    public Controleur getControleur() {
-        return controleur;
     }
 
     @Override

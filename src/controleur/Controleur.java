@@ -1,6 +1,9 @@
 package controleur;
 
+import iut.algo.Console;
+import iut.algo.CouleurConsole;
 import metier.Traducteur;
+import org.fusesource.jansi.AnsiConsole;
 import util.Lecteur;
 import util.donnee.Donnee;
 import vue.IVue;
@@ -11,6 +14,9 @@ import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import static org.fusesource.jansi.Ansi.ansi;
+import static org.fusesource.jansi.AnsiRenderer.render;
 
 /**
  * Classe qui contrôle et fait le lien entre le traducteur et la partie graphique
@@ -54,7 +60,10 @@ public class Controleur {
         if (this.vue instanceof CUI) {
             Scanner sc;
             do {
-                System.out.println("\u001B[33m[↲] Suivant - [Ln + ↲] Aller à la ligne n - [B + ↲] Précédent - [S + ↲] Tout exécuter - [Q  + ↲] Quitter\u001B[0m");
+                Console.couleurFont(CouleurConsole.JAUNE);
+                Console.println("[↲] Suivant - [Ln + ↲] Aller à la ligne n - [B + ↲] Précédent - [S + ↲] Tout exécuter - [Q  + ↲] Quitter");
+                Console.normal();
+
                 sc = new Scanner(System.in);
                 String action = sc.nextLine().toLowerCase().trim();
                 if(action.equals("q")) {
