@@ -12,7 +12,7 @@ DEBUT
 
 	ecrire ( "etape 0 : " & x & " salut les martiens !! " & y )
 
-    //YELLOW
+    //YELLOWw
 
 	ecrire ( "Veuillez entrer une valeur pour x : " )
 	lire ( x )
