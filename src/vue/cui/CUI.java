@@ -189,6 +189,15 @@ public class CUI implements IVue {
 
     @Override
     public String lire() {
-        return new Scanner(System.in).nextLine();
+        String sRet = "";
+        Scanner sc = new Scanner(System.in);
+        sRet = sc.nextLine();
+
+        while(sRet.equals("")){
+            sc = new Scanner(System.in);
+            sRet = sc.nextLine();
+        }
+
+        return sRet;
     }
 }
