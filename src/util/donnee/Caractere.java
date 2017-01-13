@@ -32,3 +32,4 @@ public class Caractere extends Donnee {
         this.valeur = valeur.substring(0, 1);
     }
 }
+//lol

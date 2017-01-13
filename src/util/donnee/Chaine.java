@@ -32,3 +32,4 @@ public class Chaine extends Donnee {
         this.valeur = valeur;
     }
 }
+//lol

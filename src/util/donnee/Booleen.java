@@ -32,3 +32,4 @@ public class Booleen extends Donnee {
         this.valeur = String.valueOf(Boolean.getBoolean(valeur));
     }
 }
+//lol

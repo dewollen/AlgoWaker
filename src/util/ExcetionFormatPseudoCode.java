@@ -8,3 +8,4 @@ public class ExcetionFormatPseudoCode extends Exception {
         System.out.println("Erreur format pseudo code ligne : " + numLigne + " --> " + ligne);
     }
 }
+//lol
