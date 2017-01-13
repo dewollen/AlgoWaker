@@ -56,14 +56,32 @@ public class Controleur {
             do {
                 System.out.println("\u001B[33m[↲] Suivant - [Ln + ↲] Aller à la ligne n - [B + ↲] Précédent - [S + ↲] Tout exécuter - [Q  + ↲] Quitter\u001B[0m");
                 sc = new Scanner(System.in);
-                switch(sc.nextLine().toLowerCase().trim()) {
+                String action = sc.nextLine().toLowerCase().trim();
+                if(action.equals("q")) {
+                    System.exit(0);
+                }
+                else if(action.equals("b")) {
+                    this.traducteur.setNbAction();
+                    reculer(this.traducteur.getNbAction());
+                    this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlVariable(), this.traducteur.getAlConsole());
+                }
+                else if(action.matches("[0-9]+")) {
+                    System.out.println("MATCHES NOMBRE");
+                    avancerJusqua(Integer.parseInt(action));
+                    this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlVariable(), this.traducteur.getAlConsole());
+                }
+                else {
+                    System.out.println("AVANCER");
+                    avancer();
+                }
+                /*switch(sc.nextLine().toLowerCase().trim()) {
                     case "q" : System.exit(0); break;
                     case "b" :
                         reculer(this.ligneCourante--);
                         this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlVariable(), this.traducteur.getAlConsole());
                         break;
                     default  : avancer();             break;
-                }
+                }*/
 
             } while (this.ligneCourante < this.lecteur.getTabLigneCode().length -1);
         }
@@ -92,11 +110,21 @@ public class Controleur {
         this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlVariable(), this.traducteur.getAlConsole());
     }
 
-    public void reculer(int ligneCourante) {
-        int ligne = 0;
-        while(ligne<=ligneCourante) {
-            this.traducteur.traiterLigne(this.lecteur.getTabLigneCode()[ligne], ligne);
-            ligne++;
+    public void reculer(int nbAction) {
+        this.traducteur.reinitialiserTraducteur();
+        int nbActionTemp = 0;
+        this.ligneCourante = 0;
+        while(nbActionTemp < nbAction-1) {
+            this.ligneCourante++;
+            this.traducteur.traiterLigne(this.lecteur.getTabLigneCode()[this.ligneCourante], this.ligneCourante);
+            nbActionTemp++;
+        }
+    }
+
+    public void avancerJusqua(int ligne) {
+        while (this.ligneCourante < ligne) {
+            this.ligneCourante++;
+            this.traducteur.traiterLigne(this.lecteur.getTabLigneCode()[this.ligneCourante], this.ligneCourante);
         }
     }
 

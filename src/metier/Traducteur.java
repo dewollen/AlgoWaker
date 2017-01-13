@@ -73,8 +73,12 @@ public class Traducteur {
      */
     private ArrayList<String> alConsole;
 
+    private ArrayList<Donnee> alStockVariable;
+
     Stack<Boolean> pile;
     Stack<Integer> sLigTQ;
+
+    private int nbAction;
 
     /**
      * Constructeur de la classe Traducteur
@@ -85,17 +89,20 @@ public class Traducteur {
         this.interpreter = new Interpreter();
 
         this.creerCons = false;
-        this.creerVar = false;
+        this.creerVar  = false;
         this.debutAlgo = false;
 
         this.alConstante = new ArrayList<>();
-        this.alVariable = new ArrayList<>();
+        this.alVariable  = new ArrayList<>();
+        this.alStockVariable = new ArrayList<>();
 
         this.alConsole = new ArrayList<>();
 
         this.pile = new Stack<>();
         this.pile.push(new Boolean(true));
         this.sLigTQ = new Stack<>();
+
+        this.nbAction = 0;
     }
 
     /**
@@ -133,6 +140,7 @@ public class Traducteur {
      * @param numLigne Numéro de la ligne à interpreter
      */
     public void traiterLigne(String ligne, int numLigne) {
+        this.nbAction++;
         ligne = ligne.replaceAll("◄—", "<-").toLowerCase();
 
         if (ligne.toLowerCase().contains("constante")) {
@@ -148,10 +156,9 @@ public class Traducteur {
                 initAttribut(ligne, creerCons);
             }
         } else if (debutAlgo) {
-            System.out.println("pile.peek() : " + pile.peek());
+
 
             if (pile.peek()) {
-                System.out.println("hein ? hein ? quoi tu dis quoi ?");
 
                 // Affectation !!!
                 if (ligne.contains("<-")) {
@@ -179,9 +186,9 @@ public class Traducteur {
                         String sTemp = "";
                         for (int i = 0; i < tabSOP.length; i++) {
                             if (tabSOP[i].contains("\"")) {
-                                sTemp += tabSOP[i].replaceAll("\"", "");
+                                sTemp += tabSOP[i].replaceAll("\"", "").trim();
                             } else {
-                                tabSOP[i] = tabSOP[i].replaceAll(" ", "");
+                                tabSOP[i] = tabSOP[i].replaceAll(" ", "").trim();
                                 sTemp += interpreter.get(tabSOP[i]);
                             }
                         }
@@ -239,12 +246,9 @@ public class Traducteur {
                 if(ligne.replaceAll(" ","").replaceAll("\t","").toLowerCase().matches("fsi")) {
                    this.pile.pop();
                 }
-                System.out.println("SI TERMINE !!!");
 
-                System.out.println(ligne.replaceAll(" ","").replaceAll("\t",""));
                 // TANTQUE !!!
                 if(ligne.replaceAll(" ","").replaceAll("\t","").toLowerCase().matches("tantque.*faire")) {
-                    System.out.println("non mais ca vas-y");
                     String verif = ligne.substring(ligne.indexOf("tantque") + 7, ligne.indexOf("faire")).replaceAll(" ", "");
                     try {
                         if (!(Boolean) interpreter.eval(verif)) {
@@ -253,8 +257,6 @@ public class Traducteur {
                         else{
                             this.pile.push(new Boolean(true));
                             this.sLigTQ.push(numLigne);
-
-                            System.out.println("entrer tantque");
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -277,21 +279,12 @@ public class Traducteur {
                 }
 
                 if(ligne.replaceAll(" ","").replaceAll("\t","").toLowerCase().matches("tantque.*faire")) {
-                    System.out.println("Je suis la !!!");
                     this.pile.push(new Boolean(false));
                 }
                 if(ligne.replaceAll(" ","").replaceAll("\t","").toLowerCase().matches("ftq")) {
                     this.pile.pop();
                 }
             }
-
-            System.out.println(pile.size());
-            if(this.pile.size()>1) {
-                System.out.println("PRECEDENT : " + pile.get(pile.size()-2));
-            }
-            System.out.println(("COURANT   : " + pile.peek()
-            ));
-
         }
     }
 
@@ -376,51 +369,64 @@ public class Traducteur {
      * @return L'ArrayList des variables créées
      */
     public void ajouterVariable(String[] tab, String type) {
+
         type = type.toLowerCase();
         String s = "";
         boolean suivi = false;
         for (int i = 0; i < tab.length; i++) {
-
-
-            System.out.println("Voulez-vous suivre la trace de la variable : " + tab[i] + " (o/n)");
-            int cpt = 0;
-            do {
-                if (cpt % 3 == 0 && cpt != 0) System.out.println("Veuillez entrer o ou n");
-                Scanner sc = new Scanner(System.in);
-                s = sc.next().toLowerCase();
-                if (s.equals("o")) {
-                    suivi = true;
-                }
-                if (s.equals("n")) {
-                    suivi = false;
-                }
-                cpt++;
-            } while (!s.equals("o") && !s.equals("n"));
+            int indice = -1;
+            for(int v=0; v<alStockVariable.size();v++) {
+                if(alStockVariable.get(v).getNom().equals(tab[i]))
+                    indice = v;
+            }
+            if(indice>-1)
+                suivi = this.alStockVariable.get(indice).getSuivi();
+            else {
+                System.out.println("Voulez-vous suivre la trace de la variable : " + tab[i] + " (o/n)");
+                int cpt = 0;
+                do {
+                    if (cpt % 3 == 0 && cpt != 0) System.out.println("Veuillez entrer o ou n");
+                    Scanner sc = new Scanner(System.in);
+                    s = sc.next().toLowerCase();
+                    if (s.equals("o")) {
+                        suivi = true;
+                    }
+                    if (s.equals("n")) {
+                        suivi = false;
+                    }
+                    cpt++;
+                } while (!s.equals("o") && !s.equals("n"));
+            }
 
             String typeTemp = "";
             switch (type) {
                 case "booleen":
                     this.alVariable.add(new Booleen(tab[i], suivi, false));
+                    if(indice == -1) this.alStockVariable.add(new Booleen(tab[i], suivi, false));
                     typeTemp = "boolean ";
                     break;
 
                 case "caractere":
                     this.alVariable.add(new Caractere(tab[i], suivi, false));
+                    if(indice == -1) this.alStockVariable.add(new Caractere(tab[i], suivi, false));
                     typeTemp = "char ";
                     break;
 
                 case "chaine de caractere":
                     this.alVariable.add(new Chaine(tab[i], suivi, false));
+                    if(indice == -1) this.alStockVariable.add(new Chaine(tab[i], suivi, false));
                     typeTemp = "String ";
                     break;
 
                 case "entier":
                     this.alVariable.add(new Entier(tab[i], suivi, false));
+                    if(indice == -1) this.alStockVariable.add(new Entier(tab[i], suivi, false));
                     typeTemp = "int ";
                     break;
 
                 case "reel":
                     this.alVariable.add(new Reel(tab[i], suivi, false));
+                    if(indice == -1) this.alStockVariable.add(new Reel(tab[i], suivi, false));
                     typeTemp = "double ";
                     break;
 
@@ -436,6 +442,7 @@ public class Traducteur {
                     evalError.printStackTrace();
                 }
             }
+
         }
     }
 
@@ -478,35 +485,98 @@ public class Traducteur {
         return "";
     }
 
-    public String rechercherPrimitive(String expression) {
-        if(expression.contains("hasard")) {
-            return hasard(expression);
+    public String rechercherPrimitive(String ligne) {
+        if(ligne.contains("hasard")){
+            return this.hasard(ligne);
         }
-        else if(expression.contains("cosinus")) {
-            //return cosinus(expression);
+        else if(ligne.contains("cosinus")){
+            return this.cosinus(ligne);
         }
-        else if(expression.contains("sinus")) {
-            //return sinus(expression);
+        else if(ligne.contains("sinus")) {
+            return this.sinus(ligne);
         }
-        else if(expression.contains("arrondi")) {
-           // return arrondi(expression);
+        else if(ligne.contains("arrondi")) {
+            return this.arrondi(ligne);
         }
-        else if(expression.contains("plafond")) {
-
+        else if(ligne.contains("plafond")) {
+            return this.plafond(ligne);
         }
-        else if(3+3==0) {
-
+        else if(ligne.contains("plancher")) {
+            return this.plancher(ligne);
+        }
+        else if(ligne.contains(("arrondi"))){
+            return this.arrondi(ligne);
+        }
+        else if(ligne.contains("^")) {
+            return this.puissance(ligne);
         }
         else {
-            return expression;
+            return ligne;
         }
-
-        return "";
     }
 
-    public String hasard(String expression) {
-        String tabExpression[] = expression.split("[()]");
+    public String hasard(String expression){
+        String variable = expression.substring(expression.indexOf("(") + 1, expression.indexOf(")")).replaceAll(" ","");
+        if (variable == ""){
+            return "(int)Math.random()";
+        }
+        return "(int)Math.random() * " + variable;
+    }
 
-        return "(int)Math.random() * " + tabExpression[1] + tabExpression[2];
+    public String cosinus(String expression){
+        String variable = expression.substring(expression.indexOf("(") + 1, expression.indexOf(")")).replaceAll(" ","");
+        return "(int)Math.cos(" + variable + ")";
+    }
+
+    public String sinus(String expression){
+        String variable = expression.substring(expression.indexOf("(") + 1, expression.indexOf(")")).replaceAll(" ","");
+        return "(int)Math.sin(" + variable + ")";
+    }
+
+    public String plafond(String expression){
+        String variable = expression.substring(expression.indexOf("(") + 1, expression.indexOf(")")).replaceAll(" ","");
+        return "(Math.ceil(" + variable + ")";
+    }
+
+    public String plancher(String expression){
+        String variable = expression.substring(expression.indexOf("(") + 1, expression.indexOf(")")).replaceAll(" ","");
+        return "(Math.floor(" + variable + ")";
+    }
+
+    public String arrondi(String expression){
+        String variable = expression.substring(expression.indexOf("(") + 1, expression.indexOf(")")).replaceAll(" ","");
+        return "((double)Math.round(" + variable + "* 100" + ")/100)";
+    }
+
+    public String puissance(String expression) {
+        String[] tabPuissance = expression.split("\\^");
+        return "Math.pow(" + tabPuissance[0] + "," + tabPuissance[1] + ")";
+    }
+
+    public void reinitialiserTraducteur() {
+        this.interpreter = new Interpreter();
+
+        this.creerCons = false;
+        this.creerVar  = false;
+        this.debutAlgo = false;
+
+        this.alConstante = new ArrayList<>();
+        this.alVariable  = new ArrayList<>();
+
+        this.alConsole = new ArrayList<>();
+
+        this.pile = new Stack<>();
+        this.pile.push(new Boolean(true));
+        this.sLigTQ = new Stack<>();
+
+        this.nbAction = 1;
+    }
+
+    public int getNbAction() {
+        return nbAction;
+    }
+
+    public void setNbAction() {
+        this.nbAction--;
     }
 }
