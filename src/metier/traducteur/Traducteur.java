@@ -29,8 +29,6 @@ public class Traducteur implements scruter.Observable {
 
     private String mode;
 
-    //nb
-
     private Observeur observeur;
 
     private String[] tabPseudoCode;
