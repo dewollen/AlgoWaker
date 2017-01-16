@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="coloration">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Downloads/iut.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jansi-1.12.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

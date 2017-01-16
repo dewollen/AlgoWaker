@@ -32,3 +32,4 @@ public class Entier extends Donnee {
         this.valeur = String.valueOf(Integer.parseInt(valeur));
     }
 }
+//lol

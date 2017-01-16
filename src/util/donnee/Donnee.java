@@ -66,3 +66,4 @@ public abstract class Donnee {
         return this.constante;
     }
 }
+//lol
