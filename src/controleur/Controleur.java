@@ -1,6 +1,7 @@
 package controleur;
 
 import bsh.EvalError;
+import exception.CodeFormatException;
 import exception.ConstantChangeException;
 import metier.traducteur.Traducteur;
 import scruter.Observeur;
@@ -155,9 +156,13 @@ public class Controleur implements ActionListener {
                 try {
                     traducteur.avancer();
                 } catch (ConstantChangeException e1) {
-                    e1.printStackTrace();
+                    System.err.println(e1.getMessage());
                 } catch (EvalError evalError) {
-                    evalError.printStackTrace();
+                    try {
+                        throw new CodeFormatException(traducteur.getNumLigneCourante(), traducteur.getLigneCourante());
+                    } catch (CodeFormatException e1) {
+                        System.err.println(e1.getMessage());
+                    }
                 }
         }
     }

@@ -71,7 +71,7 @@ public class CUI implements IVue, Observeur {
         this.majIHM(0, null);
         Scanner sc;
 
-        while (true) {
+        while (this.traducteur.getNumLigneCourante() <= this.traducteur.getPseudoCode().length) {
             System.out.println("Entrez une action :");
             sc = new Scanner(System.in);
 

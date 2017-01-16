@@ -2,7 +2,9 @@ package metier.traducteur;
 
 import bsh.EvalError;
 import bsh.Interpreter;
+import exception.CodeFormatException;
 import exception.ConstantChangeException;
+import exception.UnexpectedTypeException;
 import metier.Constante;
 import metier.Lecteur;
 import metier.Pile;
@@ -43,6 +45,7 @@ public class Traducteur implements scruter.Observable {
 
     private int nbAction;
 
+
     public Traducteur(String fichier) throws ConstantChangeException {
         this.interpreter = new Interpreter();
 
@@ -73,7 +76,11 @@ public class Traducteur implements scruter.Observable {
 
         this.nbAction++;
 
-        this.determinerMode(this.tabPseudoCode[numLigneCourante + 1]);
+        try {
+            this.determinerMode(this.tabPseudoCode[numLigneCourante + 1]);
+        } catch(ArrayIndexOutOfBoundsException e) {
+            this.numLigneCourante++;
+        }
     }
 
     private void determinerMode(String ligne) throws EvalError, ConstantChangeException {
@@ -190,18 +197,27 @@ public class Traducteur implements scruter.Observable {
                 String valeur = this.observeur.saisieUtilisateur();
                 this.pile.ecrireConsole(valeur, "lire");
 
-                switch (tmp.getType()) {
-                    case "caractere":
-                        interpreter.eval(variable + "='" + valeur + "'");
-                        tmp.setValeur(String.valueOf(interpreter.get(variable)));
-                        break;
-                    case "chaine":
-                        interpreter.eval(variable + "=\"" + valeur + "\"");
-                        tmp.setValeur(String.valueOf(interpreter.get(variable)));
-                        break;
-                    default:
-                        interpreter.eval(variable + "=" + valeur);
-                        tmp.setValeur(String.valueOf(interpreter.get(variable)));
+                try {
+                    switch (tmp.getType()) {
+                        case "caractere":
+                            interpreter.eval(variable + "='" + valeur + "'");
+                            tmp.setValeur(String.valueOf(interpreter.get(variable)));
+                            break;
+                        case "chaine":
+                            interpreter.eval(variable + "=\"" + valeur + "\"");
+                            tmp.setValeur(String.valueOf(interpreter.get(variable)));
+                            break;
+                        default:
+                            interpreter.eval(variable + "=" + valeur);
+                            tmp.setValeur(String.valueOf(interpreter.get(variable)));
+                    }
+                } catch(Exception e) {
+                    try {
+                        throw new UnexpectedTypeException(tmp.getType());
+                    } catch (UnexpectedTypeException e1) {
+                        System.err.println(e1.getMessage());
+                        System.exit(-1);
+                    }
                 }
             }
 
@@ -379,5 +395,13 @@ public class Traducteur implements scruter.Observable {
     @Override
     public void notifierObserveur(String couleur) {
         this.observeur.majIHM(numLigneCourante, couleur);
+    }
+
+    public int getNumLigneCourante() {
+        return numLigneCourante;
+    }
+
+    public String getLigneCourante() {
+        return this.tabPseudoCode[numLigneCourante];
     }
 }
