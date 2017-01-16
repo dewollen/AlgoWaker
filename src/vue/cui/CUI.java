@@ -91,6 +91,7 @@ public class CUI implements IVue, Observeur {
         String sTemp;
         int debut = (nLigne >= 19 ? nLigne - 19 : 0);
         debut = (debut + 40 > tabLigneCode.length ? tabLigneCode.length - 40 : debut);
+        if(debut <= 0) debut = 0;
         for (int i = debut; i < 40 + debut && i < tabLigneCode.length; i++) {
             sTemp = tabLigneCode[i];
             sTemp = sTemp.replaceAll("\t", "   ");
