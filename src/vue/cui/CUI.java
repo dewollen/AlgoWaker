@@ -141,7 +141,7 @@ public class CUI implements IVue, Observeur {
      * Permet de formater l'affichage des données SUIVIES et de le stocker dans le paramètre alString
      */
     private ArrayList<String> formaterDonnees(ArrayList<Variable> alDonnees) {
-        ArrayList<String> alString = new ArrayList<String>();
+        ArrayList<String> alString = new ArrayList<>();
 
         alString.add(String.format("| %-8s | %-9s | %-21s |", "NOM", "TYPE", "VALEUR"));
 
@@ -205,9 +205,8 @@ public class CUI implements IVue, Observeur {
     public String saisieUtilisateur() {
         String valeur = "";
 
-        while(valeur.equals("")) {
+        while(valeur.equals(""))
             valeur = new Scanner(System.in).nextLine();
-        }
 
         return valeur;
     }

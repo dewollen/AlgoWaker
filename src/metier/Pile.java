@@ -28,7 +28,7 @@ public class Pile {
     }
 
     public void ecrireConsole(String ligne, String type) {
-        this.alConsole.add(new String[]{ligne + "\n", type});
+        this.alConsole.add(new String[]{ligne, type});
     }
 
     public ArrayList<String[]> getConsole() {

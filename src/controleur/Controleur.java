@@ -84,7 +84,11 @@ public class Controleur implements ActionListener {
         File fichier = new File(nomNouveauFichier);
 
         if (fichier.exists())
-            this.traducteur.reset(nomNouveauFichier);
+            try {
+                this.traducteur = new Traducteur(nomNouveauFichier);
+            } catch (ConstantChangeException e) {
+                e.printStackTrace();
+            }
         else
             System.err.println("Le fichier spécifié n'existe pas : ouverture annulée.");
     }
