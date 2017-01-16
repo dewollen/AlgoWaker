@@ -15,6 +15,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Scanner;
 
 /**
@@ -123,14 +126,14 @@ public class Controleur implements ActionListener {
     public void controleurAction(String action) throws EvalError, ConstantChangeException {
         action = action.trim().toUpperCase();
 
-            switch(action) {
-                case ""  : this.traducteur.avancer(); break;
-                case "B" : this.traducteur.reculer(); break;
-                case "Q" : this.quitter();            break;
-                case "O" : this.changerFichier();     break;
-            }
+        switch(action) {
+            case ""  : this.traducteur.avancer(); break;
+            case "B" : this.traducteur.reculer(); break;
+            case "Q" : this.quitter();            break;
+            case "O" : this.changerFichier();     break;
+        }
 
-            if(action.matches("L[0-9]+")) avancerVersLigne(Integer.parseInt(action.substring(1)));
+        if(action.matches("L[0-9]+")) avancerVersLigne(Integer.parseInt(action.substring(1)));
     }
 
     /**
