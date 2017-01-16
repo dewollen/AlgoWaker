@@ -44,3 +44,4 @@ public enum Primitive {
         return tabDate[Integer.parseInt(this.equivJava)];
     }
 }
+//lol

@@ -33,3 +33,4 @@ public enum Arithmetique {
         return String.format("(%s)Math.%s() * %s", this.type, this.equivJava, variable);
     }
 }
+//lol
