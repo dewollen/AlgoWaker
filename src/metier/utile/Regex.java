@@ -16,6 +16,7 @@ public abstract class Regex {
     public static final String FTQ       = "ftq";
     public static final String VARIABLE  = "^[a-z].*:[A-Za-z]+";
     public static final String CONSTANTE = "[A-Z]+<-.+";
+    public static final String TABLEAU   = "^[a-z].*:tableau\\[[0-9]+].+";
 
     public static boolean correspond(String expression, String regex) {
         return expression.replaceAll(" ", "").replaceAll("\t", "").toLowerCase().matches(regex);
