@@ -1,8 +1,7 @@
 package vue;
 
-import util.donnee.Donnee;
-
-import java.util.ArrayList;
+import bsh.EvalError;
+import exception.ConstantChangeException;
 
 /**
  * Interface qui gère les deux modes de vue (CUI et GUI)
@@ -12,18 +11,9 @@ import java.util.ArrayList;
  */
 public interface IVue {
     /**
-     * Tableau de toutes les conditions et interaction avec l'utilisateur possible ainsi que leur couleur
+     * Tableau de toutes les conditions et interaction avec l'utilisateur possible
      */
-    String[][] motsCles = new String[][]
-            {{"si",     "\u001B[34m"},
-            {"alors",   "\u001B[34m"},
-            {"sinon",   "\u001B[34m"},
-            {"fsi",     "\u001B[34m"},
-            {"ecrire",  "\u001B[34m"},
-            {"lire",    "\u001B[33m"},
-            {"tantque", "\u001B[34m"},
-            {"faire",   "\u001B[34m"},
-            {"ftq",     "\u001B[34m"}};
+    String[] motsCles = new String[]{"si", "alors", "sinon", "fsi", "ecrire", "lire", "tantque", "faire", "ftq"};
 
     /**
      * Permet d'initialiser le fichier que l'utilisateur choisi
@@ -37,14 +27,5 @@ public interface IVue {
      */
     void afficherMessage(String message);
 
-    /**
-     * Permet d'afficher les lignes du pseudo-code ainsi que les variables
-     *
-     * @param tabLigneCode le pseudo-code à lire
-     * @param nLigne       Numéro de la ligne actuel du pseudo-code
-     */
-    void afficher(String[] tabLigneCode, Integer nLigne, ArrayList<Donnee> alDonnees, ArrayList<String> alConsole);
-
-
-    String lire();
+    void lancer() throws ConstantChangeException, EvalError;
 }

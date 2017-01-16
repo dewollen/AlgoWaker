@@ -1,15 +1,19 @@
 package controleur;
 
-import metier.Traducteur;
-import util.Lecteur;
-import util.donnee.Donnee;
+import bsh.EvalError;
+import exception.ConstantChangeException;
+import metier.traducteur.Traducteur;
+import scruter.Observeur;
 import vue.IVue;
 import vue.cui.CUI;
 import vue.gui.GUI;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -18,98 +22,143 @@ import java.util.Scanner;
  * @author Win'Rs
  * @version 2017-01-05
  */
-public class Controleur {
+public class Controleur implements ActionListener {
     private IVue vue;
-    private Lecteur lecteur;
     private Traducteur traducteur;
 
-    private int ligneCourante;
+    private Controleur(String fichier, boolean estGraphique) {
+        try {
+            this.traducteur = new Traducteur(fichier);
+        } catch (ConstantChangeException e) {
+            e.printStackTrace();
+        }
 
-    public Controleur(boolean modeGraphique) {
-        this.vue = modeGraphique ? new GUI(this) : new CUI(this);
-        this.lecteur = new Lecteur(this.vue.ouvrirFichier());
-        this.traducteur = new Traducteur(this.vue);
+        this.vue = estGraphique ? new GUI(this.traducteur) : new CUI(this, this.traducteur);
 
-        this.ligneCourante = 0;
+        this.traducteur.ajouterObserveur((Observeur) this.vue);
 
-        this.initVue();
-    }
-
-    private void initVue() { // la vue n'a pas besoin d'alpseudo code, on la lui passe dans afficher()
-        // Paramètres de la vue
-        // this.vue.setAlTraceVariables(this.traducteur.getAlVariable());
-        //this.vue.setAlPseudoCode(this.lecteur.getAlPseudoCode());
-        // this.vue.setAlTraceVariables(this.donnees);
+        if (estGraphique) {
+            /*
+            Ici on cast en GUI pour avoir accès aux méthodes spécifiques à la classe GUI
+            (qui sont normalement masquées par l'interface IVue)
+             */
+            GUI graphique = (GUI) this.vue;
+            graphique.setActionsRaccourcis(this);
+            graphique.setActionsClavier(new GestionClavier());
+        }
     }
 
     public static void main(String[] args) {
-        new Controleur(Controleur.demanderModeGraphique()).lancer();
-    }
-
-    private void lancer() {
-        this.traducteur.traiterLigne(this.lecteur.getTabLigneCode()[this.ligneCourante], this.ligneCourante);
-
-        this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, new ArrayList<Donnee>(), new ArrayList<String>());
-
-        if (this.vue instanceof CUI) {
-            Scanner sc;
-            String action;
-
-            do {
-                System.out.println("Entrez une action :");
-                sc = new Scanner(System.in);
-                action = sc.nextLine();
-
-                /*if(action.toLowerCase().equals("s")) avancer();
-                if(action.toLowerCase().equals("p")) reculer();*/
-
-                avancer();
-
-            } while (!action.toLowerCase().equals("q") && this.ligneCourante < this.lecteur.getTabLigneCode().length);
+        if (args.length != 1) {
+            System.err.println("\n\n\t\tVeuillez spécifier un unique fichier en paramètre\n\n");
+        } else {
+            Controleur controleur = new Controleur(args[0], Controleur.choisirModeInteration());
+            try {
+                controleur.vue.lancer();
+            } catch (ConstantChangeException e) {
+                e.printStackTrace();
+            } catch (EvalError evalError) {
+                evalError.printStackTrace();
+            }
         }
-
-        //avancer();
     }
 
-    private static boolean demanderModeGraphique() {
-        System.out.println("Voulez-vous lancer le programme en mode Graphique ? (O/N)");
-        Scanner scClavier = new Scanner(System.in);
+    private static boolean choisirModeInteration() {
+        System.out.println("Voulez-vous lancer le programme en mode graphique ? (O/N)");
 
-        return scClavier.hasNext() && scClavier.next().toUpperCase().equals("O");
+        String sReponse;
+        Scanner sc;
+
+        do {
+            sc = new Scanner(System.in);
+            sReponse = sc.next().toUpperCase();
+        } while (!(sReponse.equals("O") || sReponse.equals("N")));
+
+        return sReponse.equals("O");
     }
 
-    public void ouvrirFichier() {
-        this.lecteur = new Lecteur(this.vue.ouvrirFichier());
+    private void changerFichier() {
+        String nomNouveauFichier = this.vue.ouvrirFichier();
+
+        File fichier = new File(nomNouveauFichier);
+
+        if (fichier.exists())
+            this.traducteur.reset(nomNouveauFichier);
+        else
+            System.err.println("Le fichier spécifié n'existe pas : ouverture annulée.");
     }
 
-    /**
-     * Avance dans le fichier
-     */
-    public void avancer() {
-        this.ligneCourante++;
-
-        this.traducteur.traiterLigne(this.lecteur.getTabLigneCode()[this.ligneCourante], this.ligneCourante);
-
-        this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlEtatVariable().get(this.ligneCourante), this.traducteur.getAlConsole());
-    }
-
-    public void reculer() {
-        this.ligneCourante--;
-
-        this.vue.afficher(this.lecteur.getTabLigneCode(), this.ligneCourante, this.traducteur.getAlEtatVariable().get(this.ligneCourante), this.traducteur.getAlConsole());
-
-    }
-
-    public void afficherInfos() {
+    private void afficherInfos() {
         try {
             if (Desktop.isDesktopSupported())
                 Desktop.getDesktop().browse(new File("").toURI());
         } catch (Exception e) {
-            e.printStackTrace();
+            this.vue.afficherMessage("Ouverture navigateur non supportée : tentative annulée.");
         }
     }
 
-    public void quitter() {
-        System.exit(-1);
+    private void quitter() {
+        System.exit(0);
+    }
+
+    public void avancerVersLigne(int ligne) {
+        /*while (this.ligneCourante < ligne) {
+            this.ligneCourante++;
+            this.traducteur.traduire(this.lecteur.getTabLigneCode()[this.ligneCourante], this.ligneCourante);
+        }*/
+    }
+
+
+    /**
+     * Actions pour le mode CUI
+     *
+     * @param action
+     * @return
+     */
+    public void controleurAction(String action) throws EvalError, ConstantChangeException {
+        action = action.trim().toUpperCase();
+
+            switch(action) {
+                case ""  : this.traducteur.avancer(); break;
+                case "B" : this.traducteur.reculer(); break;
+                case "Q" : this.quitter();            break;
+                case "O" : this.changerFichier();     break;
+            }
+
+            if(action.matches("L[0-9]+")) avancerVersLigne(Integer.parseInt(action.substring(1)));
+    }
+
+    /**
+     * Actions pour le mode GUI
+     *
+     * @param e
+     */
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        switch (e.getActionCommand()) {
+            case "ouvrir":
+                this.changerFichier();
+                break;
+            case "quitter":
+                this.quitter();
+                break;
+            case "infos":
+                afficherInfos();
+                break;
+        }
+    }
+
+    private class GestionClavier extends KeyAdapter {
+        @Override
+        public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER)
+                try {
+                    traducteur.avancer();
+                } catch (ConstantChangeException e1) {
+                    e1.printStackTrace();
+                } catch (EvalError evalError) {
+                    evalError.printStackTrace();
+                }
+        }
     }
 }
