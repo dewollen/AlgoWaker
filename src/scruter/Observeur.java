@@ -9,5 +9,7 @@ package scruter;
 public interface Observeur {
     void majIHM(Integer ligne, String couleur);
 
+    void   afficherMessage(String message);
     String saisieUtilisateur(String message);
+    String saisieUtilisateur();
 }
