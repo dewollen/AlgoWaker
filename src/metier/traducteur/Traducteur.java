@@ -134,7 +134,8 @@ public class Traducteur implements scruter.Observable {
             for (int i = 0; i < tabNomAttribut.length; i++) {
                 suivi = false;
                 do {
-                    s = this.observeur.saisieUtilisateur("Voulez-vous suivre la trace de la variable : " + tabNomAttribut[i] + " (o/n)");
+                    this.observeur.afficherMessage("Voulez-vous suivre la trace de la variable : " + tabNomAttribut[i] + " (o/n)");
+                    s = this.observeur.saisieUtilisateur();
 
                     if (s != null && s.equals("o")) suivi = true;
 
@@ -185,7 +186,8 @@ public class Traducteur implements scruter.Observable {
             if (Regex.correspond(ligne, Regex.LIRE)) {
                 String variable = ligne.substring(ligne.indexOf("(") + 1, ligne.indexOf(")")).replaceAll(" ", "");
                 Variable tmp = this.pile.getVariable(variable);
-                String valeur = this.observeur.saisieUtilisateur("Veuillez renseigner une valeur pour " + tmp.getNom() + " :");
+                this.observeur.afficherMessage("Veuillez renseigner une valeur pour " + tmp.getNom() + " :");
+                String valeur = this.observeur.saisieUtilisateur();
                 this.pile.ecrireConsole(valeur, "lire");
 
                 switch (tmp.getType()) {

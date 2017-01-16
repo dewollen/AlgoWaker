@@ -62,6 +62,11 @@ public class CUI implements IVue, Observeur {
     }
 
     @Override
+    public String saisieUtilisateur(String message) {
+        return null;
+    }
+
+    @Override
     public void lancer() throws ConstantChangeException, EvalError {
         this.majIHM(0, null);
         Scanner sc;
@@ -197,12 +202,10 @@ public class CUI implements IVue, Observeur {
     }
 
     @Override
-    public String saisieUtilisateur(String message) {
+    public String saisieUtilisateur() {
         String valeur = "";
 
         while(valeur.equals("")) {
-            //System.out.print(message + " "); // S'affiche seulement APRÈS la saisie ?!!
-
             valeur = new Scanner(System.in).nextLine();
         }
 

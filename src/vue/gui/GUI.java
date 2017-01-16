@@ -92,6 +92,11 @@ public class GUI extends JFrame implements IVue, Observeur {
     }
 
     @Override
+    public String saisieUtilisateur() {
+        return this.saisieUtilisateur("");
+    }
+
+    @Override
     public void lancer() {
         this.setVisible(true);
     }
