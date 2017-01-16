@@ -1,48 +1,44 @@
 ALGORITHME NomAlgo
 constante:
-    C <- "COOL"
-    K <- 45
+    C ◄— "COOL"
+    K ◄— 45
 variable:
 	x, y : entier
 	zbeub : reel
 
 DEBUT 
-    x <- 5
-    y <- 7
+    x ◄— 5
+    y ◄— 7
 
-	ecrire ( "etape 0 : " & x & " salut les martiens !! " & y )
-
-    //YELLOWw
-
-	ecrire ( "Veuillez entrer une valeur pour x : " )
-	lire ( x )
-
-	si x = 5 alors
+	ecrire ( "etape 0" )
+ 
+	si x = 5 alors 
  
 		ecrire ( "etape 1" )
+		lire ( x )
+		lire (y  )
  
-		si y > 2 alors
+		si y = 2 alors 
 			ecrire ( "etape 2" ) 
 		fsi 
 
 		ecrire ( "etape 3" ) 
  
-		si y < 2 alors
+		si y = 2 alors 
 			ecrire ("etape 4") 
 		sinon 
 			ecrire ("etape 5") 
 		fsi 
  
-	fsi
-    ecrire ( "test" )
-	tantque x > 2 faire
-	    ecrire( "tantque" );
-	    x <- x-1
-	ftq
+	fsi 
+ 
+	si y = 7 alors 
+		ecrire ("etape 6") 
+	sinon 
+		ecrire ("etape 7") 
+	fsi 
 
 
 	ecrire ( "etape 8" ) 
  
 FIN
-
-
