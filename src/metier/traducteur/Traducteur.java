@@ -2,7 +2,6 @@ package metier.traducteur;
 
 import bsh.EvalError;
 import bsh.Interpreter;
-import exception.CodeFormatException;
 import exception.ConstantChangeException;
 import exception.UnexpectedTypeException;
 import metier.Constante;
@@ -76,11 +75,7 @@ public class Traducteur implements scruter.Observable {
 
         this.nbAction++;
 
-        try {
-            this.determinerMode(this.tabPseudoCode[numLigneCourante + 1]);
-        } catch(ArrayIndexOutOfBoundsException e) {
-            this.numLigneCourante++;
-        }
+        this.determinerMode(this.tabPseudoCode[numLigneCourante]);
     }
 
     private void determinerMode(String ligne) throws EvalError, ConstantChangeException {
@@ -123,25 +118,36 @@ public class Traducteur implements scruter.Observable {
         ligne = ligne.replaceAll("[\t ]", "");
 
         String[] tabLigne;
+        String[] tabNomAttribut;
         String type;
 
         if (estConstante) {
             tabLigne = ligne.split("<-");
-
             type = this.rechercheType(tabLigne[1]);
-            this.pile.majVariable(new Constante(tabLigne[0], type, tabLigne[1]));
         } else {
             tabLigne = ligne.split(":");
-            String[] tabNomAttribut = tabLigne[0].split(",");
-
             type = tabLigne[1];
-            String s;
-            boolean suivi;
+        }
 
-            for (int i = 0; i < tabNomAttribut.length; i++) {
-                suivi = false;
+        tabNomAttribut = tabLigne[0].split(",");
+
+        String s;
+        boolean suivi;
+        int indice;
+
+        for (int i = 0; i < tabNomAttribut.length; i++) {
+            suivi = false;
+            indice = -1;
+
+            for (int v = 0; v < alStockVariable.size(); v++)
+                if (alStockVariable.get(v).getNom().equals(tabNomAttribut[i]))
+                    indice = v;
+
+            if (indice > -1)
+                suivi = this.alStockVariable.get(indice).isSuivi();
+            else {
                 do {
-                    this.observeur.afficherMessage("Voulez-vous suivre la trace de la variable : " + tabNomAttribut[i] + " (o/n)");
+                    this.observeur.afficherMessage("Voulez-vous suivre la trace de : " + tabNomAttribut[i] + " (o/n)");
                     s = this.observeur.saisieUtilisateur();
 
                     if (s != null && s.equals("o")) suivi = true;
@@ -149,9 +155,12 @@ public class Traducteur implements scruter.Observable {
                 } while (s == null || !s.equals("o") && !s.equals("n"));
 
                 this.pile.ecrireConsole(s, "lire");
-
-                this.pile.majVariable(new Variable(tabNomAttribut[i], type, "", suivi));
             }
+
+            if (estConstante)
+                this.pile.majVariable(new Constante(tabLigne[0], type, tabLigne[1], suivi));
+            else
+                this.pile.majVariable(new Variable(tabNomAttribut[i], type, "", suivi));
         }
     }
 
@@ -211,7 +220,7 @@ public class Traducteur implements scruter.Observable {
                             interpreter.eval(variable + "=" + valeur);
                             tmp.setValeur(String.valueOf(interpreter.get(variable)));
                     }
-                } catch(Exception e) {
+                } catch (Exception e) {
                     try {
                         throw new UnexpectedTypeException(tmp.getType());
                     } catch (UnexpectedTypeException e1) {
@@ -286,18 +295,13 @@ public class Traducteur implements scruter.Observable {
 
         this.numLigneCourante--;
 
-        this.reset(this.fichier);
+        this.reinitialiser();
 
         this.traduire();
 
         this.nbAction--;
 
-        int nbActionTemp = 0;
-        while (nbActionTemp < nbAction - 1) {
-            this.numLigneCourante++;
-            this.traduire();
-            nbActionTemp++;
-        }
+        avancerJusqua(nbAction - 1);
     }
 
     public String evaluerExpression(String expression) {
@@ -306,29 +310,19 @@ public class Traducteur implements scruter.Observable {
         return "";
     }
 
-    public void reset(String fichier) {
+    private void reinitialiser() {
         this.interpreter = new Interpreter();
-
-        this.observeur = null;
 
         // Mode qui sert à rien (y)
         this.mode = TAB_MODE[0];
 
         this.pile = new Pile();
 
-        this.fichier = fichier;
-
-        this.tabPseudoCode = Lecteur.getPseudoCode(this.fichier);
-
-        this.alStockVariable = new ArrayList<>();
-
         this.numLigneCourante = 0;
 
         this.pile2Booleen = new Stack<>();
         this.pile2Booleen.push(new Boolean(true));
         this.sLigTQ = new Stack<>();
-
-        this.nbAction = 1;
     }
 
     public String rechercherPrimitive(String ligne) {
