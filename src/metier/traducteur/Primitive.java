@@ -12,7 +12,6 @@ public enum Primitive {
     ARRONDI  ("int"   , "round" , true ),
     PUISSANCE("double", "pow"   , true );
 
-
     private String  type;
     private String  equivJava;
     private boolean bParenthese; // false ssi on soit multiplier la primitive
