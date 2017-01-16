@@ -76,6 +76,8 @@ public class Traducteur implements scruter.Observable {
         this.nbAction++;
 
         this.determinerMode(this.tabPseudoCode[numLigneCourante]);
+
+        notifierObserveur();
     }
 
     private void determinerMode(String ligne) throws EvalError, ConstantChangeException {
@@ -157,10 +159,17 @@ public class Traducteur implements scruter.Observable {
                 this.pile.ecrireConsole(s, "lire");
             }
 
-            if (estConstante)
-                this.pile.majVariable(new Constante(tabLigne[0], type, tabLigne[1], suivi));
-            else
-                this.pile.majVariable(new Variable(tabNomAttribut[i], type, "", suivi));
+            Variable varTmp;
+            if (estConstante) {
+                varTmp = new Constante(tabLigne[0], type, tabLigne[1], suivi);
+                this.pile.majVariable(varTmp);
+                interpreter.eval(varTmp.getNom() + " = " + varTmp.getValeur());
+            }
+            else {
+                varTmp = new Variable(tabNomAttribut[i], type, "", suivi);
+                this.pile.majVariable(varTmp);
+                interpreter.eval(varTmp.getNom());
+            }
         }
     }
 
