@@ -130,7 +130,7 @@ public class Traducteur implements scruter.Observable {
             type = this.rechercheType(tabLigne[1]);
         } else {
             tabLigne = ligne.split(":");
-            if(Regex.correspond(ligne, Regex.TABLEAU)) {
+            if(Regex.correspond(ligne, Regex.TABLEAUINIT)) {
                 type = tabLigne[1].substring(tabLigne[1].indexOf(']')+3);
             }
             else
@@ -182,9 +182,10 @@ public class Traducteur implements scruter.Observable {
                     }
                     catch (Exception e){}
                 }
-                varTmp = new Variable(tabNomAttribut[i], type, "", suivi);
-                this.pile.majVariable(varTmp);
-                interpreter.eval(varTmp.getNom());
+                    varTmp = new Variable(tabNomAttribut[i], type, "", suivi);
+                    this.pile.majVariable(varTmp);
+                    interpreter.eval(varTmp.getNom());
+
             }
         }
     }
@@ -216,12 +217,16 @@ public class Traducteur implements scruter.Observable {
             //
             if (ligne.contains("<-")) {
                 String[] tabAffectation = ligne.split("<-");
-                if(Regex.correspond(ligne, Regex.TABLEAU)){
+                if(Regex.correspond(ligne, Regex.TABLEAUNUM) || Regex.correspond(ligne,Regex.TABLEAUVAR)){
                     String num = tabAffectation[0].substring(tabAffectation[0].indexOf('[')+1,tabAffectation[0].indexOf(']'));
                     String nom = tabAffectation[0].substring(0,tabAffectation[0].indexOf('['));
                     System.out.println(nom + num + tabAffectation[1]);
-                    interpreter.eval(nom+"["+num+"] =" + tabAffectation[1]);
-                    interpreter.eval(nom+"["+num+"]");
+                    try {
+                        interpreter.eval(nom + "[" + num + "] =" + tabAffectation[1]);
+                    }
+                    catch(Exception e){
+                        System.out.println(e);
+                    }
                 }
                 else {
                     interpreter.eval(tabAffectation[0] + " = " + tabAffectation[1]);
@@ -245,7 +250,7 @@ public class Traducteur implements scruter.Observable {
                         sTemp += tabSOP[i].replaceAll("\"", "").trim();
                     else {
                         tabSOP[i] = tabSOP[i].replaceAll(" ", "");
-                        sTemp += interpreter.get(tabSOP[i]);
+                        sTemp += interpreter.eval(tabSOP[i]);
                     }
                 }
                 this.pile.ecrireConsole(sTemp, "ecrire");
@@ -324,6 +329,7 @@ public class Traducteur implements scruter.Observable {
             if (Regex.correspond(ligne, Regex.FTQ)) {
                 this.pile2Booleen.pop();
                 this.numLigneCourante = this.sLigTQ.pop();
+                traduire();
             }
         } else {
             if (Regex.correspond(ligne, Regex.SI) || Regex.correspond(ligne, Regex.TANTQUE)) {
