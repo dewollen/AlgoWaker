@@ -1,4 +1,4 @@
-package metier.utile;
+package metier;
 
 /**
  * Classe qui sert à ...

@@ -1,8 +1,5 @@
 package metier.traducteur;
 
-import bsh.EvalError;
-import bsh.Interpreter;
-
 /**
  * Classe qui sert à ...
  *
@@ -10,34 +7,16 @@ import bsh.Interpreter;
  * @version 15/01/2017
  */
 public abstract class Convertisseur {
-    private static Interpreter interpreter = new Interpreter();
-
-    public static String evaluerArithmetique(String expression) throws EvalError {
-        expression = String.valueOf(interpreter.eval(convertirArithmetique(expression)));
-
-        String[] tabDecimales = expression.split("\\.");
-
-        if (tabDecimales.length == 2 && tabDecimales[1].matches("0+"))
-            return tabDecimales[0];
-
-        return expression;
-    }
-
-    public static boolean evaluerBooleen(String expression) throws EvalError {
-        return Boolean.parseBoolean(String.valueOf(interpreter.eval(convertirBooleen(expression))));
-    }
-
     public static String convertirArithmetique(String expression) {
         expression = expression.replaceAll("[\t ]", "");
         expression = expression.replaceAll("/1", "");
-        expression = expression.replaceAll("×", "*");
+        expression = expression.replaceAll("x", "*");
 
         if (expression.contains("/"))
             expression = Convertisseur.convertirDivisionReelle(expression);
 
         expression = expression.replaceAll("div", "/");
         expression = expression.replaceAll("mod", "%");
-        expression = expression.replaceAll("\\\\/̄", "Math.sqrt");
 
         return expression;
     }
@@ -47,6 +26,8 @@ public abstract class Convertisseur {
         expression = expression.replaceAll("=", "==");
         expression = expression.replaceAll("et", "&&");
         expression = expression.replaceAll("ou", "||");
+
+        expression = Convertisseur.convertirArithmetique(expression);
 
         return expression;
     }

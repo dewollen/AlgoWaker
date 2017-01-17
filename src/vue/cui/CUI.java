@@ -2,6 +2,7 @@ package vue.cui;
 
 import bsh.EvalError;
 import controleur.Controleur;
+import exception.CodeFormatException;
 import exception.ConstantChangeException;
 import iut.algo.Console;
 import iut.algo.CouleurConsole;
@@ -67,7 +68,7 @@ public class CUI implements IVue, Observeur {
     }
 
     @Override
-    public void lancer() throws ConstantChangeException, EvalError {
+    public void lancer() throws ConstantChangeException, EvalError, CodeFormatException {
         this.majIHM(0, null);
         Scanner sc;
 
@@ -91,7 +92,7 @@ public class CUI implements IVue, Observeur {
         String sTemp;
         int debut = (nLigne >= 19 ? nLigne - 19 : 0);
         debut = (debut + 40 > tabLigneCode.length ? tabLigneCode.length - 40 : debut);
-        if(debut <= 0) debut = 0;
+        if(debut < 0) debut = 0;
         for (int i = debut; i < 40 + debut && i < tabLigneCode.length; i++) {
             sTemp = tabLigneCode[i];
             sTemp = sTemp.replaceAll("\t", "   ");
@@ -121,8 +122,6 @@ public class CUI implements IVue, Observeur {
 
             if (nLigne != null && nLigne.equals(numeroLigne))
                 sRet = ccFond + sRet;
-
-
 
         for (String motCle : IVue.motsCles) {
             if (nLigne != null && nLigne.equals(numeroLigne)) {

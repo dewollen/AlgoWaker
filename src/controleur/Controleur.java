@@ -15,9 +15,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Scanner;
 
 /**
@@ -59,10 +56,8 @@ public class Controleur implements ActionListener {
             Controleur controleur = new Controleur(args[0], Controleur.choisirModeInteration());
             try {
                 controleur.vue.lancer();
-            } catch (ConstantChangeException e) {
+            } catch (ConstantChangeException | EvalError | CodeFormatException e) {
                 e.printStackTrace();
-            } catch (EvalError evalError) {
-                evalError.printStackTrace();
             }
         }
     }
@@ -109,21 +104,13 @@ public class Controleur implements ActionListener {
         System.exit(0);
     }
 
-    public void avancerVersLigne(int ligne) {
-        /*while (this.ligneCourante < ligne) {
-            this.ligneCourante++;
-            this.traducteur.traduire(this.lecteur.getTabLigneCode()[this.ligneCourante], this.ligneCourante);
-        }*/
-    }
-
-
     /**
      * Actions pour le mode CUI
      *
      * @param action
      * @return
      */
-    public void controleurAction(String action) throws EvalError, ConstantChangeException {
+    public void controleurAction(String action) throws EvalError, ConstantChangeException, CodeFormatException {
         action = action.trim().toUpperCase();
 
         switch(action) {
@@ -131,9 +118,10 @@ public class Controleur implements ActionListener {
             case "B" : this.traducteur.reculer(); break;
             case "Q" : this.quitter();            break;
             case "O" : this.changerFichier();     break;
+            case "I" : this.afficherInfos();      break;
         }
 
-        if(action.matches("L[0-9]+")) avancerVersLigne(Integer.parseInt(action.substring(1)));
+        if(action.matches("L[0-9]+")) this.traducteur.avancerJusqua(Integer.parseInt(action.substring(1)));
     }
 
     /**
@@ -170,6 +158,8 @@ public class Controleur implements ActionListener {
                     } catch (CodeFormatException e1) {
                         System.err.println(e1.getMessage());
                     }
+                } catch (CodeFormatException e1) {
+                    e1.printStackTrace();
                 }
         }
     }
