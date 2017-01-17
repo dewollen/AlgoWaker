@@ -15,7 +15,7 @@ public class Tableau {
         this.taille = taille;
         this.type = type;
         this.suivi = suivi;
-    }
+    }//lol
 
     public boolean ajoutVariable(int indice,Variable var ){
         if(indice < tabVar.length && type.equals(var.getType())) {

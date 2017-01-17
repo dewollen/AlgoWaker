@@ -10,5 +10,6 @@
     <orderEntry type="library" name="iut" level="project" />
     <orderEntry type="library" name="jansi-1.12" level="project" />
     <orderEntry type="library" name="bsh-2.0b4" level="project" />
+    <orderEntry type="library" name="jansi-1.4" level="project" />
   </component>
 </module>

@@ -19,7 +19,7 @@ public abstract class Regex {
     public static final String TABLEAUINIT   = "^[a-z].*:tableau\\[[0-9]+].+";
     public static final String TABLEAUVAR    = "^[a-z].*\\[[0-9].*].+";
     public static final String TABLEAUNUM    = "^[a-z].*\\[[a-z].*].+";
-
+//lol
     public static boolean correspond(String expression, String regex) {
         return expression.replaceAll(" ", "").replaceAll("\t", "").toLowerCase().matches(regex);
     }

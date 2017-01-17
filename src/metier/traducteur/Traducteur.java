@@ -256,7 +256,7 @@ public class Traducteur implements scruter.Observable {
                 this.pile.ecrireConsole(sTemp, "ecrire");
             }
 
-            //
+            //lol
             // Lire
             //
             if (Regex.correspond(ligne, Regex.LIRE)) {
