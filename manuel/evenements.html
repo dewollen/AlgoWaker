@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" type="text/css" href="style.css"/>
+        <title>AlgoWaker - Commandes supplémentaires</title>
+    </head>
+
+    <body>
+        <header>
+            <h1>Guide du galérien d'AlgoWaker</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Accueil</a></li><!--
+                    --><li><a href="demarrer.html">Démarrage</a></li><!--
+                    --><li><a href="commandes.html">Commandes</a></li><!--
+                    --><li><a href="evenements.html">Évènements</a></li><!--
+                    --><li><a href="interface.html">Interface</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <div>
+            <h1>Évènements</h1>
+            <p>
+                Durant l'exécution du pseudo-code, tu seras peut-être amené à fournir des informations si le code l'exige. Il se peut aussi, à contrario, que le pseudo-code te fasse parvenir des informations. Ces évènements se passent dans la "<span class="motADef">console virtuelle</span>"<span class="def">Pour ne pas confondre la console dans laquelle s'exécute AlgoWaker avec la console interne du programme, nous allons appeler cette dernière "console virtuelle" (pas toujours avec les guillemets). Voir la page "Interface" en cas de doute.</span> d'AlgoWaker
+            </p>
+
+            <div class="feuille">
+                <p>
+                    Il y a trois types d'évènements, dont deux intégrés au fonctionnement-même du pseudo-code :
+                </p>
+                <ol>
+                    <li>Le suivi d'une donnée (variable ou non) :
+                        <ul>
+                            <li>Lors de la déclaration des constantes et des variables (avant le mot-clé "DEBUT" du pseudo-code), le programme <span class="motADef">AlgoWaker</span><span class="def">Il faut bien différencier le pseudo-code qui est le fichier qu'on a entré dans le programme et le programme en lui-même. Quand le pseudo-code affiche quelque chose, cela se fait dans la console virtuelle d'AlgoWaker, alors qu'AlgoWaker s'exprime dans la console elle-même, sous l'interface du programme.</span> (et non plus le pseudo-code) te demandera si tu veux suivre la donnée rencontrée. Il faudra alors lui spécifier tes intentions en entrant "O" pour accepter le suivi de la donnée, ou "N" pour le refuser. N'hésite pas à aller voir la page <a href="interface.html">Interface</a> pour bien distinguer le programme et le pseudo-code. Les variables non suivies sont quand même prises en compte par le programme afin d'assurer la bonne exécution du code, mais elles ne s'afficheront pas dans la zone de l'interface qui leur est réservée.
+                        </ul>
+                    </li>
+                    <li>L'entrée de données pour l'affectation (<span class="bleu">lire</span>) :
+                        <ul>
+                            <li>Comme tu le sais peut-être, le pseudo-code s'exécute habituellement à la main. C'est pourquoi l'évènement <span class="bleu">lire</span> se manifeste en deux temps : premièrement par l'intermédiaire d'une demande de saisie par AlgoWaker, puis par la confirmation par sa console virtuelle (comme si chaque <span class="bleu">lire</span> était suivi d'un <span class="bleu">ecrire</span>    affichant ce qu'on a saisi.</li>
+                            <li>Dans un premier temps, AlgoWaker te demandera de saisir une valeur à affecter à la variable concernée par le <span class="bleu">lire</span> rencontré. Il faut alors, comme habituellement, saisir la valeur que tu souhaites affecter.</li>
+                            <li>Ensuite, le programme analysera ta saisie pour déterminer si le type de la variable est compatible avec ton entrée, et, si c'est le cas, écrira en <span class="jaune">jaune</span> ta saisie dans la console virtuelle pour te confirmer que l'affectation a été faite. En cas de saisie incorrecte, AlgoWaker lèvera une <span class="rouge">erreur</span> et s'arrêtera.</li>
+                        </ul>
+                    </li>
+                    <li>La réception de données provenant du pseudo-code (<span class="bleu">ecrire</span>) :
+                        <ul>
+                            <li>Ce cas est beaucoup plus simple : le pseudo-code enverra simplement dans la console virtuelle ce qui est contenu entre les parenthèses du <span class="bleu">ecrire</span> rencontré (en remplaçant les noms de variables par leur valeur).</li>
+                        </ul>
+
+                        <ul>
+                            <li>
+                                Exemple (x vaut 4) :<br/>
+                                <span class="bleu">ecrire</span>("x vaut " & enChaine(x)) écrira en <span class="bleu">bleu</span> dans la console virtuelle :<br/>
+                                <span class="bleu">x vaut 4</span>
+                            </li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <p>
+                    À noter : Nous expliquons ici les spécificités d'une exécution du code par AlgoWaker, mais nous n'expliquerons pas les mécanismes de concaténation de chaines, de fonctions (telles que enChaine() etc.) car ils relèvent de l'élaboration d'un programme en pseudo-code et non d'AlgoWaker.
+                </p>
+            </div>
+        </div>
+    </body>
+</html>

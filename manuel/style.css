@@ -12,7 +12,55 @@
     font-family : Corbel;
 }
 
-header h1 {
+
+.motADef {
+    cursor : help;
+
+    border-bottom : dashed thin var(--bleu);
+}
+
+.def {
+    position : absolute;
+    display : none;
+
+    background-color: white;
+
+    padding : .25em;
+
+    border : solid thin var(--bleu);
+    border-radius : .25em;
+
+    box-shadow: 0 0 .5em rgba(0, 0, 0, .75);
+}
+.motADef:hover + .def {
+    display : inline-block;
+}
+
+.rouge {
+    color : red;
+}
+.jaune {
+    color : gold;
+}
+.bleu {
+    color : blue;
+}
+.mauve {
+    color : magenta;
+}
+
+ul {
+    list-style-type: none;
+}
+
+div p, div ul, div ol {
+    margin : 1em 0;
+    font-size: 1.1em;
+}
+
+
+
+body > header h1 {
     background-color: var(--bleu);
 
     padding : 1em 0;
@@ -22,7 +70,7 @@ header h1 {
     color : white;
 }
 
-header a {
+body > header a {
     display : inline-block;
 
     text-decoration: none;
@@ -34,17 +82,8 @@ header a {
     color : white;
 }
 
-ul {
-    list-style-type: none;
-}
 
-p {
-    font-size: 1.1em;
-
-    margin-bottom : .5em;
-}
-
-nav {
+body > header > nav {
     overflow: hidden;
 
     background-color: var(--bleuF);
@@ -56,92 +95,43 @@ nav {
     color : white;
 }
 
-
-
-nav > ul > li {
+body > header > nav > ul > li {
     display : inline-block;
 }
-nav > ul > li:hover {
+body > header > nav > ul > li:hover {
     background-color: var(--bleuC);
 }
-
 
 
 body > div {
     display : table;
 
-    width : 100%;
+    margin : auto;
+    padding : 0 1em;
+
+    max-width : 60em;
 }
 
+body > div > * {
+    text-align: justify;
+}
 body > div > h1 {
-    margin : 1em 5em;
+    margin : 1em 0;
 
     border-bottom : solid thin black;
 }
-body > div > p {
-    margin : 1em 9em;
 
-    text-align: justify;
-}
-#contenu h2 {
-    margin : .5em 6.65em;
-}
-
-#contenu p {
-    margin : .5em 10em;
-}
-
-.def {
-    position : absolute;
-    display : none;
-
-    background-color: white;
-
-    border : solid thin var(--bleu);
-}
-
-.motADef {
-    cursor : help;
-
-    border-bottom : dashed thin var(--bleu);
-}
-.motADef:hover + .def {
-    display : inline-block;
-}
-
-.rouge {
-    color : red;
-}
-
-.colonne {
-    display : table-cell;
-
-    width : 50%;
-
-    padding : 0 2em;
-}
-.colonne:first-child {
-    border-right : solid thin silver;
-    padding-left : 5em;
-}
-.colonne:last-child {
-    padding-right : 5em;
-}
 
 .feuille {
     box-shadow : 0 0 .5em rgba(0, 0, 0, .75);
 
     padding : .5em 2.5em;
-
-    text-align: justify;
+    margin-bottom : 1em;
 }
 .feuille h2 {
     margin : .25em 0 .5em 0;
     text-align : center;
 }
-.feuille table {
-    padding-left : 1em;
-}
-.feuille table td {
-    vertical-align: top;
+.feuille img {
+    width : 100%;
 }

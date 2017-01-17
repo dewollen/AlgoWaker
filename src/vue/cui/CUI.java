@@ -157,7 +157,7 @@ public class CUI implements IVue, Observeur {
         String sRet = "";
         for (int i = 4; i > 0; i--) {
             if (alConsole.size() - i >= 0) {
-                sRet += String.format("| %-83s |\n", colorerConsole(alConsole.get(alConsole.size() - i)));
+                sRet += "| " + this.colorerConsole(String.format("%-83s", alConsole.get(alConsole.size() - i)[0]), alConsole.get(alConsole.size() - i)[1]) + " |\n";
             }
             else
                 sRet += String.format("| %-83s |\n", " ");
@@ -167,10 +167,10 @@ public class CUI implements IVue, Observeur {
         return sRet;
     }
 
-    private String colorerConsole(String[] ligneConsole) {
-        String sRet = ligneConsole[0];
+    private String colorerConsole(String ligneConsole, String typeConsole) {
+        String sRet = ligneConsole;
 
-        switch(ligneConsole[1]) {
+        switch(typeConsole) {
             case "lire" :
                 sRet = CouleurConsole.JAUNE.getFont() + sRet + Console.getCodeNormal();
                 break;
