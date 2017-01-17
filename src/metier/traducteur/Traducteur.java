@@ -10,7 +10,7 @@ import metier.Lecteur;
 import metier.Tableau;
 import metier.Pile;
 import metier.Variable;
-import metier.utile.Regex;
+import metier.Regex;
 import scruter.Observeur;
 
 import java.util.ArrayList;
