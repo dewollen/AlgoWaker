@@ -69,7 +69,7 @@ public class PanelConsole extends JScrollPane {
 
         // Écrit la ligne dans la "console" avec la couleur définie au dessus
         try {
-            this.doc.insertString(posInit, ligne, null);
+            this.doc.insertString(posInit, ligne + "\n", null);
             this.doc.setCharacterAttributes(posInit, ligne.length(), this.colorationLigne, false);
         } catch (BadLocationException e) {
             e.printStackTrace();

@@ -1,6 +1,7 @@
 package vue;
 
 import bsh.EvalError;
+import exception.CodeFormatException;
 import exception.ConstantChangeException;
 
 /**
@@ -27,5 +28,5 @@ public interface IVue {
      */
     void afficherMessage(String message);
 
-    void lancer() throws ConstantChangeException, EvalError;
+    void lancer() throws ConstantChangeException, EvalError, CodeFormatException;
 }

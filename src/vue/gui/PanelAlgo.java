@@ -5,7 +5,6 @@ import vue.IVue;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
-import java.lang.reflect.Field;
 
 public class PanelAlgo extends JScrollPane {
     private DocumentStyle doc;
@@ -32,10 +31,12 @@ public class PanelAlgo extends JScrollPane {
         this.setViewportView(this.panelAffichage);
     }
 
+    // Ne fonctionne pas correctement
+    /*
     private void avancerLigneCourante(int numLigne) {
         if (numLigne > (getViewport().getSize().getHeight() - 2) / 15)
             this.getVerticalScrollBar().setValue(Math.abs((int) (numLigne - getViewport().getSize().getHeight() / 15) * 15 + 7));
-    }
+    }*/
 
     public void formaterCode(String[] tabLigneCode, Integer numLigneCourante, String couleur) {
         try {
@@ -54,7 +55,7 @@ public class PanelAlgo extends JScrollPane {
             e.printStackTrace();
         }
 
-        this.avancerLigneCourante(numLigneCourante);
+        //this.avancerLigneCourante(numLigneCourante);
     }
 
     @Override
@@ -103,17 +104,12 @@ public class PanelAlgo extends JScrollPane {
         }
 
         private Color getEquivalentCouleur(String nomCouleur) {
-            Color couleur;
-
-            Field field;
-            try {
-                field = Class.forName("java.awt.Color").getField(nomCouleur.toLowerCase());
-                couleur = (Color) field.get(null);
-            } catch (Exception e) {
-                couleur = Color.MAGENTA;
+            switch (nomCouleur) {
+                case "ROUGE" : return Color.red;
+                case "VERT"  : return Color.green;
             }
 
-            return couleur;
+            return couleurLigneCourante;
         }
     }
 }

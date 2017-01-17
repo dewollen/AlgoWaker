@@ -21,6 +21,13 @@ public class Variable {
         this.suivi = suivi;
     }
 
+    public Variable(Variable variable) {
+        this.nom = variable.getNom();
+        this.type = variable.getType();
+        this.valeur = variable.getValeur();
+        this.suivi = variable.isSuivi();
+    }
+
     public String getNom() {
         return nom;
     }

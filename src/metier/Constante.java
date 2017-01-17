@@ -10,7 +10,7 @@ import exception.ConstantChangeException;
  */
 public class Constante extends Variable {
     public Constante(String nom, String type, String valeur, boolean suivi) {
-        super(nom.toUpperCase(), type, valeur, suivi);
+        super(nom, type, valeur, suivi);
     }
 
     @Override

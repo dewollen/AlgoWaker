@@ -2,15 +2,10 @@ package metier.traducteur;
 
 import bsh.EvalError;
 import bsh.Interpreter;
+import exception.CodeFormatException;
 import exception.ConstantChangeException;
 import exception.UnexpectedTypeException;
-import javafx.scene.control.Tab;
-import metier.Constante;
-import metier.Lecteur;
-import metier.Tableau;
-import metier.Pile;
-import metier.Variable;
-import metier.utile.Regex;
+import metier.*;
 import scruter.Observeur;
 
 import java.util.ArrayList;
@@ -39,20 +34,14 @@ public class Traducteur implements scruter.Observable {
 
     private int numLigneCourante;
 
-    private ArrayList<Variable> alStockVariable;
-
     private Stack<Boolean> pile2Booleen;
     private Stack<Integer> sLigTQ;
-
-    private int nbAction;
-
 
     public Traducteur(String fichier) throws ConstantChangeException {
         this.interpreter = new Interpreter();
 
         this.observeur = null;
 
-        // Mode qui sert à rien (y)
         this.mode = TAB_MODE[0];
 
         this.pile = new Pile();
@@ -61,28 +50,22 @@ public class Traducteur implements scruter.Observable {
 
         this.tabPseudoCode = Lecteur.getPseudoCode(this.fichier);
 
-        this.alStockVariable = new ArrayList<>();
-
         this.numLigneCourante = 1;
 
         this.pile2Booleen = new Stack<>();
         this.pile2Booleen.push(new Boolean(true));
         this.sLigTQ = new Stack<>();
-
-        this.nbAction = 0;
     }
 
-    public void traduire() throws EvalError, ConstantChangeException {
+    public void traduire() throws EvalError, ConstantChangeException, CodeFormatException {
         notifierObserveur();
 
-        this.nbAction++;
+        this.pile.ajouterEtat();
 
         this.determinerMode(this.tabPseudoCode[numLigneCourante]);
-
-        notifierObserveur();
     }
 
-    private void determinerMode(String ligne) throws EvalError, ConstantChangeException {
+    private void determinerMode(String ligne) throws EvalError, ConstantChangeException, CodeFormatException {
         // Formatage
         ligne = ligne.trim();
         ligne = ligne.replaceAll("◄—", "<-");
@@ -99,7 +82,7 @@ public class Traducteur implements scruter.Observable {
         this.traiterLigne(ligne);
     }
 
-    private void traiterLigne(String ligne) throws EvalError, ConstantChangeException {
+    private void traiterLigne(String ligne) throws EvalError, ConstantChangeException, CodeFormatException {
         if (!(ligne.equals("") || ligne.startsWith("//"))) {
             switch (this.mode) {
                 case "ALGORITHME":
@@ -107,9 +90,11 @@ public class Traducteur implements scruter.Observable {
                     break;
                 case "constante:":
                     this.initVariable(ligne, true);
+                    notifierObserveur();
                     break;
                 case "variable:":
                     this.initVariable(ligne, false);
+                    notifierObserveur();
                     break;
                 case "DEBUT":
                     this.traiterAlgo(ligne);
@@ -130,10 +115,9 @@ public class Traducteur implements scruter.Observable {
             type = this.rechercheType(tabLigne[1]);
         } else {
             tabLigne = ligne.split(":");
-            if(Regex.correspond(ligne, Regex.TABLEAU)) {
-                type = tabLigne[1].substring(tabLigne[1].indexOf(']')+3);
-            }
-            else
+            if (Regex.correspond(ligne, Regex.TABLEAU)) {
+                type = tabLigne[1].substring(tabLigne[1].indexOf(']') + 3);
+            } else
                 type = tabLigne[1];
         }
 
@@ -141,95 +125,67 @@ public class Traducteur implements scruter.Observable {
 
         String s;
         boolean suivi;
-        int indice;
 
         for (int i = 0; i < tabNomAttribut.length; i++) {
             suivi = false;
-            indice = -1;
 
-            for (int v = 0; v < alStockVariable.size(); v++)
-                if (alStockVariable.get(v).getNom().equals(tabNomAttribut[i]))
-                    indice = v;
+            do {
+                this.observeur.afficherMessage("Voulez-vous suivre la trace de : " + tabNomAttribut[i] + " (o/n)");
+                s = this.observeur.saisieUtilisateur();
 
-            if (indice > -1)
-                suivi = this.alStockVariable.get(indice).isSuivi();
-            else {
-                do {
-                    this.observeur.afficherMessage("Voulez-vous suivre la trace de : " + tabNomAttribut[i] + " (o/n)");
-                    s = this.observeur.saisieUtilisateur();
+                if (s != null && s.equals("o")) suivi = true;
 
-                    if (s != null && s.equals("o")) suivi = true;
+            } while (s == null || !s.equals("o") && !s.equals("n"));
 
-                } while (s == null || !s.equals("o") && !s.equals("n"));
-
-                this.pile.ecrireConsole(s, "lire");
-            }
+            this.pile.ecrireConsole(s, "lire");
 
             Variable varTmp;
             Tableau tabTmp;
             if (estConstante) {
                 varTmp = new Constante(tabLigne[0], type, tabLigne[1], suivi);
                 this.pile.majVariable(varTmp);
-                interpreter.eval(varTmp.getNom() + " = " + varTmp.getValeur());
-            }
-            else {
-                if(Regex.correspond(ligne, Regex.TABLEAUINIT)){
-                    int taille = Integer.parseInt(tabLigne[1].substring(tabLigne[1].indexOf('[')+1, tabLigne[1].indexOf(']')));
-                    tabTmp = new Tableau(tabLigne[0],type,taille,suivi);
-                    String typeTmp = this.getPrimitive(type);
-                    try {
-                        interpreter.eval(tabLigne[0] + " = new " + typeTmp + "[" + taille + "]");
-                    }
-                    catch (Exception e){}
+                interpreter.eval(this.getPrimitive(varTmp.getType()) + " " + varTmp.getNom() + " = " + varTmp.getValeur());
+            } else {
+                if (Regex.correspond(ligne, Regex.TABLEAUINIT)) {
+                    int taille = Integer.parseInt(tabLigne[1].substring(tabLigne[1].indexOf('[') + 1, tabLigne[1].indexOf(']')));
+                    tabTmp = new Tableau(tabLigne[0], type, taille, suivi);
+                    this.pile.majVariable(tabTmp);
+                    interpreter.eval(tabLigne[0] + " = new " + this.getPrimitive(type) + "[" + taille + "]");
+                } else {
+                    varTmp = new Variable(tabNomAttribut[i], type, "", suivi);
+                    this.pile.majVariable(varTmp);
+                    interpreter.eval(this.getPrimitive(varTmp.getType()) + " " + varTmp.getNom());
                 }
-                varTmp = new Variable(tabNomAttribut[i], type, "", suivi);
-                this.pile.majVariable(varTmp);
-                interpreter.eval(varTmp.getNom());
             }
         }
     }
 
-    private String getPrimitive(String type){
-        String sRet = "";
-
-        switch(type){
-            case "entier"    : sRet = "int"; break;
-
-            case "reel"      : sRet = "double"; break;
-
-            case "caractere" : sRet = "char"; break;
-
-            case "chaine"    : sRet = "String"; break;
-
-            case "booleen"   : sRet = "boolean"; break;
-
-            default : break;
-        }
-
-        return sRet;
-    }
-
-    private void traiterAlgo(String ligne) throws ConstantChangeException, EvalError {
+    private void traiterAlgo(String ligne) throws ConstantChangeException, EvalError, CodeFormatException {
         if (pile2Booleen.peek()) {
             //
             // Affectation
             //
             if (ligne.contains("<-")) {
                 String[] tabAffectation = ligne.split("<-");
-                if(Regex.correspond(ligne, Regex.TABLEAU)){
-                    String num = tabAffectation[0].substring(tabAffectation[0].indexOf('[')+1,tabAffectation[0].indexOf(']'));
-                    String nom = tabAffectation[0].substring(0,tabAffectation[0].indexOf('['));
+                if (Regex.correspond(ligne, Regex.TABLEAU)) {
+                    String num = tabAffectation[0].substring(tabAffectation[0].indexOf('[') + 1, tabAffectation[0].indexOf(']'));
+                    String nom = tabAffectation[0].substring(0, tabAffectation[0].indexOf('['));
                     System.out.println(nom + num + tabAffectation[1]);
-                    interpreter.eval(nom+"["+num+"] =" + tabAffectation[1]);
-                    interpreter.eval(nom+"["+num+"]");
-                }
-                else {
+
+                    interpreter.eval(nom + "[" + num + "] =" + tabAffectation[1]);
+                    interpreter.eval(nom + "[" + num + "]");
+
+                    if(this.pile.getVariable(nom) instanceof Tableau) {
+                        Tableau tab = (Tableau) this.pile.getVariable(nom);
+                        tab.ajoutVariable(Integer.parseInt(num), tabAffectation[1]);
+
+                    }
+                } else {
+                    tabAffectation[1] = evaluerExpression(tabAffectation[1]);
                     interpreter.eval(tabAffectation[0] + " = " + tabAffectation[1]);
                     tabAffectation[0] = tabAffectation[0].replaceAll("[\t ]", "");
                     this.pile.getVariable(tabAffectation[0]).setValeur(String.valueOf(interpreter.get(tabAffectation[0])));
                 }
-
-
             }
 
             //
@@ -289,35 +245,36 @@ public class Traducteur implements scruter.Observable {
             if (Regex.correspond(ligne, Regex.SI)) {
                 String verif = ligne.substring(ligne.indexOf("si") + 2, ligne.indexOf("alors"));
 
-                verif = Convertisseur.convertirBooleen(verif);
-                try {
-                    if (!(Boolean) interpreter.eval(verif)) {
-                        this.pile2Booleen.push(new Boolean(false));
-                    }
-                    else {
-                        this.pile2Booleen.push(new Boolean(true));
-                    }
-                } catch (EvalError evalError) {
-                    evalError.printStackTrace();
+                verif = evaluerExpression(verif);
+
+                if (!(Boolean) interpreter.eval(verif)) {
+                    this.pile2Booleen.push(new Boolean(false));
+                    this.notifierObserveur("ROUGE");
+                } else {
+                    this.pile2Booleen.push(new Boolean(true));
+                    this.notifierObserveur("VERT");
                 }
             }
-            if(Regex.correspond(ligne, Regex.SINON)) {
+            if (Regex.correspond(ligne, Regex.SINON)) {
                 this.pile2Booleen.push(new Boolean(!this.pile2Booleen.pop()));
             }
-            if(Regex.correspond(ligne, Regex.FSI)) {
+            if (Regex.correspond(ligne, Regex.FSI)) {
                 this.pile2Booleen.pop();
             }
+
 
             // TANTQUE !!!
             if (Regex.correspond(ligne, Regex.TANTQUE)) {
                 String verif = ligne.substring(ligne.indexOf("tantque") + 7, ligne.indexOf("faire")).replaceAll(" ", "");
 
-                verif = Convertisseur.convertirBooleen(verif);
+                verif = evaluerExpression(verif);
 
                 if (!(Boolean) interpreter.eval(verif)) {
                     this.pile2Booleen.push(new Boolean(false));
+                    this.notifierObserveur("ROUGE");
                 } else {
                     this.pile2Booleen.push(new Boolean(true));
+                    this.notifierObserveur("VERT");
                     this.sLigTQ.push(numLigneCourante);
                 }
             }
@@ -335,14 +292,49 @@ public class Traducteur implements scruter.Observable {
             if (Regex.correspond(ligne, Regex.SINON) && this.pile2Booleen.get(this.pile2Booleen.size() - 2)) {
                 this.pile2Booleen.push(!this.pile2Booleen.pop());
             }
+
+            this.notifierObserveur("BLANC");
         }
     }
 
-    private String rechercheType(String s) throws EvalError {
-        return interpreter.eval(s).getClass().getSimpleName();
+    private String getPrimitive(String type) {
+        switch (type) {
+            case "entier":
+                return "int";
+            case "reel":
+                return "double";
+            case "caractere":
+                return "char";
+            case "chaine":
+                return "String";
+            case "booleen":
+                return "boolean";
+        }
+
+        return "NON DEFINI";
     }
 
-    public void avancer() throws ConstantChangeException, EvalError {
+
+    private String rechercheType(String s) throws EvalError {
+        String javaTypeEnveloppe = interpreter.eval(s).getClass().getSimpleName();
+
+        switch (javaTypeEnveloppe) {
+            case "Integer":
+                return "entier";
+            case "Character":
+                return "caractere";
+            case "Double":
+                return "reel";
+            case "String":
+                return "Chaine";
+            case "Boolean":
+                return "booleen";
+        }
+
+        return "NON DEFINI";
+    }
+
+    public void avancer() throws ConstantChangeException, EvalError, CodeFormatException {
         if (numLigneCourante == this.getPseudoCode().length)
             System.exit(0);
 
@@ -351,58 +343,45 @@ public class Traducteur implements scruter.Observable {
         this.numLigneCourante++;
     }
 
-    public void reculer() throws ConstantChangeException, EvalError {
+    public void reculer() throws ConstantChangeException, EvalError, CodeFormatException {
         if (numLigneCourante <= 0)
             return;
 
         this.numLigneCourante--;
 
-        this.reinitialiser();
+        this.pile.retirerEtat();
 
         this.traduire();
 
-        this.nbAction--;
-
-        avancerJusqua(nbAction - 1);
+        notifierObserveur();
     }
 
-    public String evaluerExpression(String expression) {
+    public String evaluerExpression(String expression) throws CodeFormatException {
+        expression = Convertisseur.convertirBooleen(expression);
+
         String tabExpression[] = expression.split("[){1}]");
-        rechercherPrimitive(tabExpression[0]);
-        return "";
+        return rechercherPrimitive(tabExpression[0]);
     }
 
-    private void reinitialiser() {
-        this.interpreter = new Interpreter();
-
-        // Mode qui sert à rien (y)
-        this.mode = TAB_MODE[0];
-
-        this.pile = new Pile();
-
-        this.numLigneCourante = 0;
-
-        this.pile2Booleen = new Stack<>();
-        this.pile2Booleen.push(new Boolean(true));
-        this.sLigTQ = new Stack<>();
-    }
-
-    public String rechercherPrimitive(String ligne) {
-        for (Primitive p : Primitive.values()) {
-            if (ligne.contains(p.name()))
+    public String rechercherPrimitive(String ligne) throws CodeFormatException {
+        for (Primitive p : Primitive.values())
+            if (ligne.contains(p.name().toLowerCase()))
                 return p.calculer(ligne);
-        }
+
+        for (PrimitiveDate p : PrimitiveDate.values())
+            if (ligne.contains(p.name().toLowerCase()))
+                return p.date(ligne);
+
+        for (Arithmetique a : Arithmetique.values())
+            if (ligne.contains(a.name().toLowerCase()))
+                return a.calculer(ligne);
 
         return ligne;
     }
 
-    public void avancerJusqua(int ligne) throws ConstantChangeException, EvalError {
-        this.numLigneCourante = 0;
-
-        while (numLigneCourante < ligne) {
-            this.numLigneCourante++;
-            this.traduire();
-        }
+    public void avancerJusqua(int ligne) {
+        if (ligne < this.tabPseudoCode.length && ligne >= 0)
+            this.numLigneCourante = ligne;
     }
 
     /* --------------------------------------------------- */
