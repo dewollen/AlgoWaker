@@ -156,11 +156,27 @@ public class CUI implements IVue, Observeur {
     private String formaterConsole(ArrayList<String[]> alConsole) {
         String sRet = "";
         for (int i = 4; i > 0; i--) {
-            if (alConsole.size() - i >= 0)
-                sRet += String.format("| %-83s |\n", alConsole.get(alConsole.size() - i)[0]);
+            if (alConsole.size() - i >= 0) {
+                sRet += String.format("| %-83s |\n", colorerConsole(alConsole.get(alConsole.size() - i)));
+            }
             else
                 sRet += String.format("| %-83s |\n", " ");
 
+        }
+
+        return sRet;
+    }
+
+    private String colorerConsole(String[] ligneConsole) {
+        String sRet = ligneConsole[0];
+
+        switch(ligneConsole[1]) {
+            case "lire" :
+                sRet = CouleurConsole.JAUNE.getFont() + sRet + Console.getCodeNormal();
+                break;
+            case "ecrire" :
+                sRet = CouleurConsole.MAUVE.getFont() + sRet + Console.getCodeNormal();
+                break;
         }
 
         return sRet;

@@ -113,15 +113,25 @@ public class Controleur implements ActionListener {
     public void controleurAction(String action) throws EvalError, ConstantChangeException, CodeFormatException {
         action = action.trim().toUpperCase();
 
-        switch(action) {
-            case ""  : this.traducteur.avancer(); break;
-            case "B" : this.traducteur.reculer(); break;
-            case "Q" : this.quitter();            break;
-            case "O" : this.changerFichier();     break;
-            case "I" : this.afficherInfos();      break;
+        switch (action) {
+            case "":
+                this.traducteur.avancer();
+                break;
+            case "B":
+                this.traducteur.reculer();
+                break;
+            case "Q":
+                this.quitter();
+                break;
+            case "O":
+                this.changerFichier();
+                break;
+            case "I":
+                this.afficherInfos();
+                break;
         }
 
-        if(action.matches("L[0-9]+")) this.traducteur.avancerJusqua(Integer.parseInt(action.substring(1)));
+        if (action.matches("L[0-9]+")) this.traducteur.avancerJusqua(Integer.parseInt(action.substring(1)));
     }
 
     /**
@@ -158,8 +168,6 @@ public class Controleur implements ActionListener {
                     } catch (CodeFormatException e1) {
                         System.err.println(e1.getMessage());
                     }
-                } catch (CodeFormatException e1) {
-                    e1.printStackTrace();
                 }
         }
     }
